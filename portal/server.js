@@ -10,7 +10,6 @@ const path    = require('path');
 const fs      = require('fs-extra');
 
 const submitRoute   = require('./routes/submit');
-const convertRoute  = require('./routes/convert');
 const pipelineRoute = require('./routes/pipeline');
 
 const app  = express();
@@ -29,7 +28,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // POST /convert    — receives a drawing photo, returns 16x16 pixel art
 // POST /pipeline   — triggers template engine + GitHub push (called by /submit)
 app.use('/submit',   submitRoute);
-app.use('/convert',  convertRoute);
 app.use('/pipeline', pipelineRoute);
 
 // Health check — useful for confirming the server is running

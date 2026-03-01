@@ -1,49 +1,36 @@
 // ─────────────────────────────────────────────────────────────
 // Route: POST /submit
-// Receives the completed form submission including the approved
-// 16x16 pixel art texture. Saves everything to disk and triggers
-// the automation pipeline.
+// Receives completed form submission as JSON.
+// Sprite is a reference to a pre-existing file in
+// portal/public/sprites/ rather than an uploaded image.
+// No file upload needed — drawing step has been removed.
 // ─────────────────────────────────────────────────────────────
 
 const express = require('express');
-const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs-extra');
-const axios   = require('axios');
 
 const router = express.Router();
 
-// Where to store approved textures temporarily before pipeline picks them up
-const upload = multer({
-  dest: path.join(__dirname, '../../submissions/tmp/'),
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB max
-});
-
-router.post('/', upload.single('texture'), async (req, res) => {
+router.post('/', express.json(), async (req, res) => {
   try {
-    const { name, type, creatureName, ...formData } = req.body;
+    const { type, creatureName, sprite, answers } = req.body;
 
-    // ── Validate required fields ──────────────────────────────
-    if (!name || !type || !creatureName) {
+    if (!type || !creatureName || !sprite) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ error: 'No texture file uploaded' });
-    }
-
     // ── Build submission object ───────────────────────────────
-    const timestamp   = Date.now();
+    const timestamp    = Date.now();
     const submissionId = `${timestamp}-${creatureName.toLowerCase().replace(/\s+/g, '-')}`;
 
     const submission = {
-      id: submissionId,
+      id:          submissionId,
       submittedAt: new Date().toISOString(),
-      submittedBy: name,
-      type,            // "creature" | "weapon" | "block" | "item"
-      name: creatureName,
-      formData,        // all the form answers specific to this type
-      textureFile: `${submissionId}.png`
+      type,
+      name:        creatureName,
+      sprite,      // { id, file, label } — points to pre-existing sprite PNG
+      answers      // all form answers (biome, power, shape, effects, etc.)
     };
 
     // ── Save submission to disk ───────────────────────────────
@@ -53,32 +40,21 @@ router.post('/', upload.single('texture'), async (req, res) => {
     const submissionDir = path.join(SUBMISSIONS_DIR, submissionId);
     await fs.ensureDir(submissionDir);
 
-    // Save the JSON brief
     await fs.writeJson(
       path.join(submissionDir, 'submission.json'),
       submission,
       { spaces: 2 }
     );
 
-    // Save the approved texture PNG
-    await fs.move(
-      req.file.path,
-      path.join(submissionDir, `${submissionId}.png`)
-    );
+    console.log(`✅ Saved: ${submissionId} (${type}: "${creatureName}" / sprite: ${sprite.label})`);
 
-    console.log(`✅ New submission saved: ${submissionId} (${type} by ${name})`);
-
-    // ── Trigger the automation pipeline ──────────────────────
-    // The pipeline route handles template engine + GitHub push
-    // We call it internally so the kid gets a fast response
-    // while the pipeline runs in the background
+    // ── Trigger pipeline in background ───────────────────────
     triggerPipeline(submissionId, submissionDir, submission);
 
-    // ── Respond to the kid ────────────────────────────────────
     res.json({
-      success: true,
+      success:      true,
       submissionId,
-      message: `Your ${type} "${creatureName}" has been submitted! 🎉`
+      message:      `Your ${type} "${creatureName}" has been submitted! 🎉`
     });
 
   } catch (err) {
@@ -87,17 +63,13 @@ router.post('/', upload.single('texture'), async (req, res) => {
   }
 });
 
-// Fires the pipeline in the background — doesn't block the response
 async function triggerPipeline(submissionId, submissionDir, submission) {
   try {
-    // Import and run the pipeline directly
     const { runPipeline } = require('./pipeline');
     await runPipeline(submissionId, submissionDir, submission);
-    console.log(`🚀 Pipeline completed for: ${submissionId}`);
+    console.log(`🚀 Pipeline complete: ${submissionId}`);
   } catch (err) {
     console.error(`❌ Pipeline failed for ${submissionId}:`, err);
-    // Pipeline failure doesn't affect the kid — submission is still saved
-    // OpenClaw can re-run failed pipelines by reading from /submissions/
   }
 }
 

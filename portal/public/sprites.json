@@ -1,0 +1,211 @@
+{
+  "_readme": "All sprites sourced from OpenGameArt.org. OpenClaw: extract 16x16 sprites from the sheets listed in _sources, rename them as listed below, and place in portal/public/sprites/[category]/",
+
+  "_sources": {
+    "creatures": {
+      "pack": "Tiny Creatures",
+      "url": "https://opengameart.org/content/tiny-creatures",
+      "license": "CC0 — no attribution required"
+    },
+    "weapons_items_blocks": {
+      "pack": "DawnLike 16x16 Universal Rogue-like Tileset v1.81",
+      "url": "https://opengameart.org/content/dawnlike-16x16-universal-rogue-like-tileset-v181",
+      "license": "CC BY 4.0 — credit: DawnBringer and Dragonkin in README"
+    },
+    "backup": {
+      "pack": "16x16 Dungeon Tileset",
+      "url": "https://opengameart.org/content/16x16-dungeon-tileset",
+      "license": "CC0 — no attribution required"
+    }
+  },
+
+  "shapes": {
+    "tiny_crawling": {
+      "label": "Tiny Crawling", "emoji": "🐜",
+      "sprites": [
+        { "id": "spider",     "file": "sprites/tiny_crawling/spider.png",     "label": "Spider" },
+        { "id": "scorpion",   "file": "sprites/tiny_crawling/scorpion.png",   "label": "Scorpion" },
+        { "id": "beetle",     "file": "sprites/tiny_crawling/beetle.png",     "label": "Beetle" },
+        { "id": "ant",        "file": "sprites/tiny_crawling/ant.png",        "label": "Ant" },
+        { "id": "crab",       "file": "sprites/tiny_crawling/crab.png",       "label": "Crab" },
+        { "id": "centipede",  "file": "sprites/tiny_crawling/centipede.png",  "label": "Centipede" },
+        { "id": "slug",       "file": "sprites/tiny_crawling/slug.png",       "label": "Slug" },
+        { "id": "moth",       "file": "sprites/tiny_crawling/moth.png",       "label": "Moth" },
+        { "id": "firefly",    "file": "sprites/tiny_crawling/firefly.png",    "label": "Firefly" },
+        { "id": "tick",       "file": "sprites/tiny_crawling/tick.png",       "label": "Tick" },
+        { "id": "ladybug",    "file": "sprites/tiny_crawling/ladybug.png",    "label": "Ladybug" },
+        { "id": "cockroach",  "file": "sprites/tiny_crawling/cockroach.png",  "label": "Cockroach" }
+      ]
+    },
+    "small_ground": {
+      "label": "Small Ground", "emoji": "🐀",
+      "sprites": [
+        { "id": "rat",        "file": "sprites/small_ground/rat.png",         "label": "Rat" },
+        { "id": "mouse",      "file": "sprites/small_ground/mouse.png",       "label": "Mouse" },
+        { "id": "rabbit",     "file": "sprites/small_ground/rabbit.png",      "label": "Rabbit" },
+        { "id": "fox",        "file": "sprites/small_ground/fox.png",         "label": "Fox" },
+        { "id": "ferret",     "file": "sprites/small_ground/ferret.png",      "label": "Ferret" },
+        { "id": "raccoon",    "file": "sprites/small_ground/raccoon.png",     "label": "Raccoon" },
+        { "id": "hedgehog",   "file": "sprites/small_ground/hedgehog.png",    "label": "Hedgehog" },
+        { "id": "squirrel",   "file": "sprites/small_ground/squirrel.png",    "label": "Squirrel" },
+        { "id": "cat",        "file": "sprites/small_ground/cat.png",         "label": "Cat" },
+        { "id": "frog",       "file": "sprites/small_ground/frog.png",        "label": "Frog" },
+        { "id": "lizard",     "file": "sprites/small_ground/lizard.png",      "label": "Lizard" },
+        { "id": "turtle",     "file": "sprites/small_ground/turtle.png",      "label": "Turtle" }
+      ]
+    },
+    "medium_ground": {
+      "label": "Medium Ground", "emoji": "🐱",
+      "sprites": [
+        { "id": "wolf",       "file": "sprites/medium_ground/wolf.png",       "label": "Wolf" },
+        { "id": "dog",        "file": "sprites/medium_ground/dog.png",        "label": "Dog" },
+        { "id": "boar",       "file": "sprites/medium_ground/boar.png",       "label": "Boar" },
+        { "id": "goat",       "file": "sprites/medium_ground/goat.png",       "label": "Goat" },
+        { "id": "lynx",       "file": "sprites/medium_ground/lynx.png",       "label": "Lynx" },
+        { "id": "panther",    "file": "sprites/medium_ground/panther.png",    "label": "Panther" },
+        { "id": "deer",       "file": "sprites/medium_ground/deer.png",       "label": "Deer" },
+        { "id": "ram",        "file": "sprites/medium_ground/ram.png",        "label": "Ram" },
+        { "id": "hyena",      "file": "sprites/medium_ground/hyena.png",      "label": "Hyena" },
+        { "id": "badger",     "file": "sprites/medium_ground/badger.png",     "label": "Badger" },
+        { "id": "porcupine",  "file": "sprites/medium_ground/porcupine.png",  "label": "Porcupine" },
+        { "id": "armadillo",  "file": "sprites/medium_ground/armadillo.png",  "label": "Armadillo" }
+      ]
+    },
+    "large_ground": {
+      "label": "Large Ground", "emoji": "🐻",
+      "sprites": [
+        { "id": "bear",       "file": "sprites/large_ground/bear.png",        "label": "Bear" },
+        { "id": "horse",      "file": "sprites/large_ground/horse.png",       "label": "Horse" },
+        { "id": "unicorn",    "file": "sprites/large_ground/unicorn.png",     "label": "Unicorn" },
+        { "id": "elephant",   "file": "sprites/large_ground/elephant.png",    "label": "Elephant" },
+        { "id": "minotaur",   "file": "sprites/large_ground/minotaur.png",    "label": "Minotaur" },
+        { "id": "gorilla",    "file": "sprites/large_ground/gorilla.png",     "label": "Gorilla" },
+        { "id": "rhino",      "file": "sprites/large_ground/rhino.png",       "label": "Rhino" },
+        { "id": "bison",      "file": "sprites/large_ground/bison.png",       "label": "Bison" },
+        { "id": "lion",       "file": "sprites/large_ground/lion.png",        "label": "Lion" },
+        { "id": "tiger",      "file": "sprites/large_ground/tiger.png",       "label": "Tiger" },
+        { "id": "camel",      "file": "sprites/large_ground/camel.png",       "label": "Camel" },
+        { "id": "troll",      "file": "sprites/large_ground/troll.png",       "label": "Troll" }
+      ]
+    },
+    "small_flying": {
+      "label": "Small Flying", "emoji": "🐦",
+      "sprites": [
+        { "id": "bat",        "file": "sprites/small_flying/bat.png",         "label": "Bat" },
+        { "id": "parrot",     "file": "sprites/small_flying/parrot.png",      "label": "Parrot" },
+        { "id": "owl",        "file": "sprites/small_flying/owl.png",         "label": "Owl" },
+        { "id": "raven",      "file": "sprites/small_flying/raven.png",       "label": "Raven" },
+        { "id": "fairy",      "file": "sprites/small_flying/fairy.png",       "label": "Fairy" },
+        { "id": "imp",        "file": "sprites/small_flying/imp.png",         "label": "Imp" },
+        { "id": "pixie",      "file": "sprites/small_flying/pixie.png",       "label": "Pixie" },
+        { "id": "firebird",   "file": "sprites/small_flying/firebird.png",    "label": "Firebird" },
+        { "id": "sprite",     "file": "sprites/small_flying/sprite.png",      "label": "Sprite" },
+        { "id": "dragonfly",  "file": "sprites/small_flying/dragonfly.png",   "label": "Dragonfly" },
+        { "id": "wisp",       "file": "sprites/small_flying/wisp.png",        "label": "Wisp" },
+        { "id": "hummingbird","file": "sprites/small_flying/hummingbird.png", "label": "Hummingbird" }
+      ]
+    },
+    "large_flying": {
+      "label": "Large Flying", "emoji": "🦅",
+      "sprites": [
+        { "id": "dragon_green","file": "sprites/large_flying/dragon_green.png","label": "Green Dragon" },
+        { "id": "dragon_red", "file": "sprites/large_flying/dragon_red.png",  "label": "Red Dragon" },
+        { "id": "dragon_ice", "file": "sprites/large_flying/dragon_ice.png",  "label": "Ice Dragon" },
+        { "id": "eagle",      "file": "sprites/large_flying/eagle.png",       "label": "Eagle" },
+        { "id": "harpy",      "file": "sprites/large_flying/harpy.png",       "label": "Harpy" },
+        { "id": "pegasus",    "file": "sprites/large_flying/pegasus.png",     "label": "Pegasus" },
+        { "id": "phoenix",    "file": "sprites/large_flying/phoenix.png",     "label": "Phoenix" },
+        { "id": "wyvern",     "file": "sprites/large_flying/wyvern.png",      "label": "Wyvern" },
+        { "id": "gargoyle",   "file": "sprites/large_flying/gargoyle.png",    "label": "Gargoyle" },
+        { "id": "griffon",    "file": "sprites/large_flying/griffon.png",     "label": "Griffon" },
+        { "id": "roc",        "file": "sprites/large_flying/roc.png",         "label": "Roc" },
+        { "id": "manticore",  "file": "sprites/large_flying/manticore.png",   "label": "Manticore" }
+      ]
+    },
+    "slithering": {
+      "label": "Slithering", "emoji": "🐍",
+      "sprites": [
+        { "id": "snake",      "file": "sprites/slithering/snake.png",         "label": "Snake" },
+        { "id": "cobra",      "file": "sprites/slithering/cobra.png",         "label": "Cobra" },
+        { "id": "worm",       "file": "sprites/slithering/worm.png",          "label": "Worm" },
+        { "id": "naga",       "file": "sprites/slithering/naga.png",          "label": "Naga" },
+        { "id": "eel",        "file": "sprites/slithering/eel.png",           "label": "Eel" },
+        { "id": "hydra",      "file": "sprites/slithering/hydra.png",         "label": "Hydra" },
+        { "id": "basilisk",   "file": "sprites/slithering/basilisk.png",      "label": "Basilisk" },
+        { "id": "viper",      "file": "sprites/slithering/viper.png",         "label": "Viper" },
+        { "id": "python",     "file": "sprites/slithering/python.png",        "label": "Python" },
+        { "id": "lindworm",   "file": "sprites/slithering/lindworm.png",      "label": "Lindworm" },
+        { "id": "lamia",      "file": "sprites/slithering/lamia.png",         "label": "Lamia" },
+        { "id": "serpent",    "file": "sprites/slithering/serpent.png",       "label": "Sea Serpent" }
+      ]
+    },
+    "swimming": {
+      "label": "Swimming", "emoji": "🐟",
+      "sprites": [
+        { "id": "fish",       "file": "sprites/swimming/fish.png",            "label": "Fish" },
+        { "id": "salmon",     "file": "sprites/swimming/salmon.png",          "label": "Salmon" },
+        { "id": "shark",      "file": "sprites/swimming/shark.png",           "label": "Shark" },
+        { "id": "jellyfish",  "file": "sprites/swimming/jellyfish.png",       "label": "Jellyfish" },
+        { "id": "mermaid",    "file": "sprites/swimming/mermaid.png",         "label": "Mermaid" },
+        { "id": "kraken",     "file": "sprites/swimming/kraken.png",          "label": "Kraken" },
+        { "id": "sea_turtle", "file": "sprites/swimming/sea_turtle.png",      "label": "Sea Turtle" },
+        { "id": "dolphin",    "file": "sprites/swimming/dolphin.png",         "label": "Dolphin" },
+        { "id": "seahorse",   "file": "sprites/swimming/seahorse.png",        "label": "Seahorse" },
+        { "id": "anglerfish", "file": "sprites/swimming/anglerfish.png",      "label": "Anglerfish" },
+        { "id": "siren",      "file": "sprites/swimming/siren.png",           "label": "Siren" },
+        { "id": "sea_crab",   "file": "sprites/swimming/sea_crab.png",        "label": "Sea Crab" }
+      ]
+    }
+  },
+
+  "weapons": {
+    "sprites": [
+      { "id": "sword_iron",   "file": "sprites/weapons/sword_iron.png",       "label": "Iron Sword" },
+      { "id": "sword_gold",   "file": "sprites/weapons/sword_gold.png",       "label": "Gold Sword" },
+      { "id": "axe",          "file": "sprites/weapons/axe.png",              "label": "Axe" },
+      { "id": "bow",          "file": "sprites/weapons/bow.png",              "label": "Bow" },
+      { "id": "staff",        "file": "sprites/weapons/staff.png",            "label": "Staff" },
+      { "id": "dagger",       "file": "sprites/weapons/dagger.png",           "label": "Dagger" },
+      { "id": "hammer",       "file": "sprites/weapons/hammer.png",           "label": "Hammer" },
+      { "id": "spear",        "file": "sprites/weapons/spear.png",            "label": "Spear" },
+      { "id": "wand",         "file": "sprites/weapons/wand.png",             "label": "Wand" },
+      { "id": "scythe",       "file": "sprites/weapons/scythe.png",           "label": "Scythe" },
+      { "id": "trident",      "file": "sprites/weapons/trident.png",          "label": "Trident" },
+      { "id": "crossbow",     "file": "sprites/weapons/crossbow.png",         "label": "Crossbow" }
+    ]
+  },
+
+  "blocks": {
+    "sprites": [
+      { "id": "crystal",      "file": "sprites/blocks/crystal.png",           "label": "Crystal Block" },
+      { "id": "glowstone",    "file": "sprites/blocks/glowstone.png",         "label": "Glow Stone" },
+      { "id": "mushroom",     "file": "sprites/blocks/mushroom.png",          "label": "Mushroom Block" },
+      { "id": "ice",          "file": "sprites/blocks/ice.png",               "label": "Ice Block" },
+      { "id": "lava",         "file": "sprites/blocks/lava.png",              "label": "Lava Block" },
+      { "id": "mossy",        "file": "sprites/blocks/mossy.png",             "label": "Mossy Block" },
+      { "id": "gold",         "file": "sprites/blocks/gold.png",              "label": "Gold Block" },
+      { "id": "obsidian",     "file": "sprites/blocks/obsidian.png",          "label": "Obsidian Block" },
+      { "id": "haunted",      "file": "sprites/blocks/haunted.png",           "label": "Haunted Block" },
+      { "id": "nature",       "file": "sprites/blocks/nature.png",            "label": "Nature Block" },
+      { "id": "rune",         "file": "sprites/blocks/rune.png",              "label": "Rune Block" },
+      { "id": "bone",         "file": "sprites/blocks/bone.png",              "label": "Bone Block" }
+    ]
+  },
+
+  "items": {
+    "sprites": [
+      { "id": "potion_red",   "file": "sprites/items/potion_red.png",         "label": "Red Potion" },
+      { "id": "potion_blue",  "file": "sprites/items/potion_blue.png",        "label": "Blue Potion" },
+      { "id": "gem",          "file": "sprites/items/gem.png",                "label": "Gem" },
+      { "id": "scroll",       "file": "sprites/items/scroll.png",             "label": "Scroll" },
+      { "id": "amulet",       "file": "sprites/items/amulet.png",             "label": "Amulet" },
+      { "id": "ring",         "file": "sprites/items/ring.png",               "label": "Ring" },
+      { "id": "key",          "file": "sprites/items/key.png",                "label": "Key" },
+      { "id": "bomb",         "file": "sprites/items/bomb.png",               "label": "Bomb" },
+      { "id": "orb",          "file": "sprites/items/orb.png",                "label": "Magic Orb" },
+      { "id": "lantern",      "file": "sprites/items/lantern.png",            "label": "Lantern" },
+      { "id": "horn",         "file": "sprites/items/horn.png",               "label": "Horn" },
+      { "id": "feather",      "file": "sprites/items/feather.png",            "label": "Magic Feather" }
+    ]
+  }
+}
