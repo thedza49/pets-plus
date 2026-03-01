@@ -1,27 +1,87 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "animation.rat.walk": {
-      "loop": true,
-      "bones": {
-        "body": {
-          "rotation": [0, "Math.sin(query.anim_time * 500) * 10", 0]
-        }
-      }
-    },
     "animation.rat.idle": {
       "loop": true,
+      "animation_length": 2,
       "bones": {
-        "body": {
-          "scale": [1, "1 + Math.sin(query.anim_time * 200) * 0.05", 1]
+        "head": {
+          "rotation": {
+            "0.0":  [0, 0, 0],
+            "1.0":  [5, 0, 0],
+            "2.0":  [0, 0, 0]
+          }
+        },
+        "tail": {
+          "rotation": {
+            "0.0":  [-30, 0,  0],
+            "1.0":  [-30, 15, 0],
+            "2.0":  [-30, 0,  0]
+          }
         }
       }
     },
+
+    "animation.rat.walk": {
+      "loop": true,
+      "animation_length": 0.5,
+      "bones": {
+        "leg_front_left": {
+          "rotation": {
+            "0.0":   [30, 0, 0],
+            "0.25":  [-30, 0, 0],
+            "0.5":   [30, 0, 0]
+          }
+        },
+        "leg_front_right": {
+          "rotation": {
+            "0.0":   [-30, 0, 0],
+            "0.25":  [30, 0, 0],
+            "0.5":   [-30, 0, 0]
+          }
+        },
+        "leg_back_left": {
+          "rotation": {
+            "0.0":   [-30, 0, 0],
+            "0.25":  [30, 0, 0],
+            "0.5":   [-30, 0, 0]
+          }
+        },
+        "leg_back_right": {
+          "rotation": {
+            "0.0":   [30, 0, 0],
+            "0.25":  [-30, 0, 0],
+            "0.5":   [30, 0, 0]
+          }
+        },
+        "tail": {
+          "rotation": {
+            "0.0":  [-30, -10, 0],
+            "0.25": [-30,  10, 0],
+            "0.5":  [-30, -10, 0]
+          }
+        }
+      }
+    },
+
     "animation.rat.sit": {
       "loop": true,
+      "animation_length": 1,
       "bones": {
         "body": {
-          "position": [0, -2, 0]
+          "rotation": [15, 0, 0]
+        },
+        "head": {
+          "rotation": [-15, 0, 0]
+        },
+        "leg_back_left": {
+          "rotation": [-60, 0, 0]
+        },
+        "leg_back_right": {
+          "rotation": [-60, 0, 0]
+        },
+        "tail": {
+          "rotation": [-60, 0, 0]
         }
       }
     }

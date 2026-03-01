@@ -1,92 +1,73 @@
 {
-  "_comment": "This file maps portal form selections to Minecraft behavior components and values. Edit this file to add new power types, biomes, or behaviors without touching the core template engine.",
+  "_comment": "Maps portal form selections to Minecraft behavior components. Edit to add new options without touching the pipeline.",
 
-  "spawn_biome": {
-    "Cave":      { "spawns_underground": true,  "height_max": 50,  "height_min": -64, "block_filter": ["minecraft:stone", "minecraft:deepslate"] },
-    "Forest":    { "spawns_underground": false, "height_max": 120, "height_min": 60,  "block_filter": ["minecraft:grass_block", "minecraft:dirt"] },
-    "Ocean":     { "spawns_underwater": true,   "height_max": 62,  "height_min": -20, "block_filter": ["minecraft:sand", "minecraft:gravel"] },
-    "Desert":    { "spawns_underground": false, "height_max": 100, "height_min": 60,  "block_filter": ["minecraft:sand", "minecraft:sandstone"] },
-    "Mountains": { "spawns_underground": false, "height_max": 200, "height_min": 100, "block_filter": ["minecraft:stone", "minecraft:snow"] }
+  "body_shapes": {
+    "tiny_crawling":   { "model": "geometry.pets_plus.tiny_crawling",   "texture": "textures/entity/tiny_crawling",   "scale": 0.4, "width": 0.3,  "height": 0.2,  "speed": 0.32, "health": 6  },
+    "small_ground":    { "model": "geometry.pets_plus.small_ground",    "texture": "textures/entity/small_ground",    "scale": 0.7, "width": 0.5,  "height": 0.5,  "speed": 0.28, "health": 10 },
+    "medium_ground":   { "model": "geometry.pets_plus.medium_ground",   "texture": "textures/entity/medium_ground",   "scale": 1.0, "width": 0.8,  "height": 1.0,  "speed": 0.25, "health": 16 },
+    "large_ground":    { "model": "geometry.pets_plus.large_ground",    "texture": "textures/entity/large_ground",    "scale": 1.4, "width": 1.4,  "height": 1.8,  "speed": 0.20, "health": 30 },
+    "small_flying":    { "model": "geometry.pets_plus.small_flying",    "texture": "textures/entity/small_flying",    "scale": 0.6, "width": 0.6,  "height": 0.5,  "speed": 0.35, "health": 8,  "can_fly": true },
+    "large_flying":    { "model": "geometry.pets_plus.large_flying",    "texture": "textures/entity/large_flying",    "scale": 1.5, "width": 2.0,  "height": 1.8,  "speed": 0.40, "health": 40, "can_fly": true },
+    "long_slithering": { "model": "geometry.pets_plus.long_slithering", "texture": "textures/entity/long_slithering", "scale": 0.8, "width": 0.6,  "height": 0.4,  "speed": 0.22, "health": 12 },
+    "swimming":        { "model": "geometry.pets_plus.swimming",        "texture": "textures/entity/swimming",        "scale": 0.9, "width": 0.8,  "height": 0.6,  "speed": 0.30, "health": 14, "can_swim": true }
   },
 
-  "rarity": {
-    "Common":   { "spawn_weight": 80, "herd_min": 2, "herd_max": 5 },
-    "Uncommon": { "spawn_weight": 30, "herd_min": 1, "herd_max": 3 },
-    "Rare":     { "spawn_weight": 8,  "herd_min": 1, "herd_max": 1 }
+  "spawn_biome": {
+    "Cave":      { "spawns_underground": true,  "height_max": 50,  "height_min": -64, "blocks": ["minecraft:stone","minecraft:deepslate"] },
+    "Forest":    { "spawns_underground": false, "height_max": 120, "height_min": 60,  "blocks": ["minecraft:grass_block","minecraft:dirt"] },
+    "Ocean":     { "spawns_underwater": true,   "height_max": 62,  "height_min": -20, "blocks": ["minecraft:sand","minecraft:gravel"] },
+    "Desert":    { "spawns_underground": false, "height_max": 100, "height_min": 60,  "blocks": ["minecraft:sand","minecraft:sandstone"] },
+    "Mountains": { "spawns_underground": false, "height_max": 200, "height_min": 100, "blocks": ["minecraft:stone","minecraft:snow"] }
   },
 
   "friendliness": {
-    "Runs away":           { "flee_speed": 1.6, "flee_distance": 12 },
-    "Ignores you":         { "flee_speed": 0.0, "flee_distance": 0  },
-    "Follows you around":  { "flee_speed": 0.0, "flee_distance": 0, "ambient_follow": true }
+    "Runs away":          { "flee_speed": 1.6, "flee_distance": 12 },
+    "Ignores you":        { "flee_speed": 0.0, "flee_distance": 0  },
+    "Follows you around": { "flee_speed": 0.0, "flee_distance": 0, "ambient_follow": true }
   },
 
-  "special_power": {
-    "Collects items": {
-      "component_group": {
-        "minecraft:behavior.pickup_items": {
-          "priority": 2,
-          "max_dist": 8,
-          "goal_radius": 1.5,
-          "speed_multiplier": 1.3
-        }
-      }
-    },
-    "Finds hidden things": {
-      "component_group": {
-        "minecraft:behavior.move_to_block": {
-          "priority": 2,
-          "speed_multiplier": 1.2,
-          "target_block_filters": {},
-          "on_reach": { "event": "pets_plus:on_found", "target": "self" }
-        }
-      }
-    },
-    "Protects you": {
-      "component_group": {
-        "minecraft:behavior.defend_trusted_target": {
-          "priority": 1,
-          "entity_types": [{ "filters": { "test": "is_family", "subject": "other", "value": "monster" }, "max_dist": 12 }]
-        }
-      }
-    },
-    "Scares mobs": {
-      "component_group": {
-        "minecraft:behavior.stomp_attack": {
-          "priority": 2,
-          "speed_multiplier": 1.0,
-          "track_target": true
-        }
-      }
-    },
-    "Digs for treasure": {
-      "component_group": {
-        "minecraft:behavior.move_to_block": {
-          "priority": 2,
-          "speed_multiplier": 1.0,
-          "search_height": 4,
-          "search_range": 10
-        }
-      }
-    }
+  "creature_powers": {
+    "Collects items":      { "minecraft:behavior.pickup_items": { "priority": 2, "max_dist": 8, "goal_radius": 1.5, "speed_multiplier": 1.3 } },
+    "Finds hidden things": { "minecraft:behavior.move_to_block": { "priority": 2, "speed_multiplier": 1.2, "search_range": 10, "search_height": 4 } },
+    "Protects you":        { "minecraft:behavior.defend_trusted_target": { "priority": 1, "entity_types": [{ "filters": { "test": "is_family", "subject": "other", "value": "monster" }, "max_dist": 12 }] } },
+    "Scares mobs":         { "minecraft:behavior.stomp_attack": { "priority": 2, "speed_multiplier": 1.0, "track_target": true } },
+    "Digs for treasure":   { "minecraft:behavior.move_to_block": { "priority": 2, "speed_multiplier": 1.0, "search_range": 10, "search_height": 8 } }
   },
 
-  "size": {
-    "tiny":      { "collision_width": 0.3,  "collision_height": 0.25, "movement_speed": 0.32, "health": 6  },
-    "small":     { "collision_width": 0.4,  "collision_height": 0.35, "movement_speed": 0.28, "health": 8  },
-    "same size": { "collision_width": 0.6,  "collision_height": 1.8,  "movement_speed": 0.25, "health": 20 },
-    "big":       { "collision_width": 1.2,  "collision_height": 2.0,  "movement_speed": 0.20, "health": 40 }
+  "weapon_effects": {
+    "Extra damage":  { "minecraft:weapon": { "damage": 8 } },
+    "Knockback":     { "minecraft:weapon": { "damage": 5 }, "minecraft:knockback_roar": { "duration": 0.5, "distance_horizontal": 6, "distance_vertical": 2 } },
+    "Fire":          { "minecraft:weapon": { "damage": 4, "on_hit_effects": [{ "effect": "fire", "duration": 5, "amplifier": 0 }] } },
+    "Poison":        { "minecraft:weapon": { "damage": 3, "on_hit_effects": [{ "effect": "poison", "duration": 8, "amplifier": 0 }] } },
+    "Speed boost":   { "minecraft:mob_effect": { "effect": "speed", "duration": 3, "amplifier": 1, "ambient": true, "visible": false } },
+    "Lifesteal":     { "minecraft:weapon": { "damage": 5 }, "minecraft:healing": { "amount": 2 } }
+  },
+
+  "block_behaviours": {
+    "Just looks cool":          { "type": "decorative" },
+    "Glows":                    { "minecraft:block_light_emission": 0.8 },
+    "Bouncy":                   { "minecraft:block_collision": { "origin": [-8,-8,-8], "size": [16,24,16] } },
+    "Damages mobs":             { "minecraft:on_step_on": { "event": "hurt_entity", "target": "other" } },
+    "Makes a sound":            { "minecraft:on_step_on": { "event": "play_sound", "target": "self" } },
+    "Grows things":             { "minecraft:random_ticking": { "on_tick": { "event": "grow_plants", "target": "self" } } }
+  },
+
+  "item_uses": {
+    "Eat it":           { "minecraft:food": { "nutrition": 6, "saturation_modifier": "normal" } },
+    "Throw it":         { "minecraft:projectile": { "projectile_entity": "minecraft:snowball", "minimum_critical_power": 1.0 } },
+    "Potion effect":    { "minecraft:use_duration": 32, "minecraft:on_use": { "on_use": { "event": "give_effect" } } },
+    "Place a light":    { "minecraft:block_placer": { "block": "minecraft:torch", "use_on": ["minecraft:stone","minecraft:dirt"] } },
+    "Summon your pet":  { "minecraft:use_duration": 1, "minecraft:on_use": { "on_use": { "event": "summon_pet" } } }
   },
 
   "tame_items": {
-    "bread":    "minecraft:bread",
-    "fish":     "minecraft:cod",
-    "bone":     "minecraft:bone",
-    "apple":    "minecraft:apple",
-    "carrot":   "minecraft:carrot",
-    "berries":  "minecraft:sweet_berries",
-    "seeds":    "minecraft:wheat_seeds",
-    "meat":     "minecraft:cooked_beef",
-    "cheese":   "minecraft:bread"
+    "bread":   "minecraft:bread",
+    "fish":    "minecraft:cod",
+    "bone":    "minecraft:bone",
+    "apple":   "minecraft:apple",
+    "carrot":  "minecraft:carrot",
+    "berries": "minecraft:sweet_berries",
+    "seeds":   "minecraft:wheat_seeds",
+    "meat":    "minecraft:cooked_beef"
   }
 }

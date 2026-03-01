@@ -2,591 +2,367 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pets Plus — Creature Creator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Pets Plus — Creator Portal</title>
   <style>
-    /* ── Base ──────────────────────────────────── */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #1a1a2e;
-      background-image:
-        radial-gradient(ellipse at top, #16213e 0%, #1a1a2e 70%);
-      min-height: 100vh;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: #fff;
-      padding: 20px;
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    :root {
+      --green:#5dff5d; --yellow:#ffd700; --dirt:#7c5c2e;
+      --dark:#1a1008; --panel:#2a1f0e; --border:#5a3e1b;
+      --text:#fffbe8; --sub:#c8b890;
     }
-
-    /* ── Header ────────────────────────────────── */
-    .header {
-      text-align: center;
-      padding: 30px 0 20px;
-    }
-    .header h1 {
-      font-size: 2.8rem;
-      color: #7cfc00;
-      text-shadow: 0 0 20px rgba(124,252,0,0.5);
-      letter-spacing: 2px;
-      font-weight: 900;
-    }
-    .header p {
-      color: #a8d8a8;
-      font-size: 1.1rem;
-      margin-top: 8px;
-    }
-
-    /* ── Card ──────────────────────────────────── */
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid rgba(124,252,0,0.3);
-      border-radius: 16px;
-      padding: 30px;
-      max-width: 600px;
-      margin: 0 auto 20px;
-      backdrop-filter: blur(10px);
-    }
-
-    /* ── Step indicator ────────────────────────── */
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 30px;
-    }
-    .step-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      transition: all 0.3s;
-    }
-    .step-dot.active  { background: #7cfc00; box-shadow: 0 0 8px #7cfc00; }
-    .step-dot.done    { background: #3cb371; }
-
-    /* ── Labels + inputs ───────────────────────── */
-    label {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #7cfc00;
-      margin-bottom: 10px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 14px 18px;
-      font-size: 1.1rem;
-      border-radius: 10px;
-      border: 2px solid rgba(124,252,0,0.3);
-      background: rgba(0,0,0,0.4);
-      color: #fff;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    input[type="text"]:focus {
-      border-color: #7cfc00;
-    }
-    input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
-
-    /* ── Big choice buttons ─────────────────────── */
-    .choices {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 4px;
-    }
-    .choice-btn {
-      padding: 20px 10px;
-      border-radius: 14px;
-      border: 2px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      font-size: 1.4rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-      line-height: 1.4;
-    }
-    .choice-btn .emoji  { display: block; font-size: 2.2rem; margin-bottom: 6px; }
-    .choice-btn .label  { display: block; font-size: 0.95rem; font-weight: 600; }
-    .choice-btn:hover   { border-color: #7cfc00; transform: scale(1.03); background: rgba(124,252,0,0.1); }
-    .choice-btn.selected { border-color: #7cfc00; background: rgba(124,252,0,0.2); box-shadow: 0 0 16px rgba(124,252,0,0.3); }
-
-    /* ── Navigation buttons ─────────────────────── */
-    .nav { display: flex; justify-content: space-between; margin-top: 24px; gap: 12px; }
-    .btn {
-      padding: 14px 32px;
-      border-radius: 10px;
-      border: none;
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex: 1;
-    }
-    .btn-primary {
-      background: #7cfc00;
-      color: #1a1a2e;
-    }
-    .btn-primary:hover  { background: #90ff00; transform: translateY(-2px); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-    .btn-secondary {
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
-
-    /* ── Upload area ────────────────────────────── */
-    .upload-area {
-      border: 3px dashed rgba(124,252,0,0.4);
-      border-radius: 14px;
-      padding: 40px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-    .upload-area:hover { border-color: #7cfc00; background: rgba(124,252,0,0.05); }
-    .upload-area input[type="file"] {
-      position: absolute; inset: 0;
-      opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .upload-area .upload-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
-    .upload-area p { color: #a8d8a8; }
-
-    /* ── Pixel art preview ──────────────────────── */
-    .preview-container {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .preview-img {
-      image-rendering: pixelated;
-      border: 3px solid #7cfc00;
-      border-radius: 8px;
-      width: 160px; height: 160px;
-    }
-    .preview-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
-
-    /* ── Loading spinner ────────────────────────── */
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #7cfc00;
-      font-size: 1.1rem;
-    }
-    .spinner {
-      display: inline-block;
-      width: 30px; height: 30px;
-      border: 3px solid rgba(124,252,0,0.3);
-      border-top-color: #7cfc00;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 10px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Success screen ─────────────────────────── */
-    .success {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .success .big-emoji { font-size: 5rem; display: block; margin-bottom: 20px; }
-    .success h2 { color: #7cfc00; font-size: 2rem; margin-bottom: 10px; }
-    .success p  { color: #a8d8a8; font-size: 1.1rem; line-height: 1.6; }
-
-    /* ── Hidden ─────────────────────────────────── */
-    .hidden { display: none !important; }
-
-    /* ── Question title ─────────────────────────── */
-    .question-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 16px;
-      line-height: 1.4;
-    }
-
-    /* ── Mobile tweaks ──────────────────────────── */
-    @media (max-width: 480px) {
-      .header h1 { font-size: 2rem; }
-      .choices { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .choice-btn { padding: 14px 8px; }
-      .choice-btn .emoji { font-size: 1.8rem; }
-    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    body{background:#1a1008;background-image:repeating-linear-gradient(0deg,transparent,transparent 31px,rgba(0,0,0,.12) 31px,rgba(0,0,0,.12) 32px),repeating-linear-gradient(90deg,transparent,transparent 31px,rgba(0,0,0,.12) 31px,rgba(0,0,0,.12) 32px);min-height:100vh;font-family:'Press Start 2P',monospace;color:var(--text);padding:12px;overflow-x:hidden;}
+    .header{text-align:center;padding:20px 0 14px;border-bottom:4px solid var(--border);margin-bottom:18px;}
+    .header h1{font-size:clamp(1rem,5vw,1.6rem);color:var(--yellow);text-shadow:3px 3px 0 #7a5000,-1px -1px 0 #000;letter-spacing:2px;line-height:1.5;}
+    .header p{color:var(--sub);font-size:clamp(0.35rem,1.8vw,0.5rem);margin-top:8px;line-height:2;}
+    .panel{background:var(--panel);border:3px solid var(--border);box-shadow:inset 0 0 0 1px #1a0e00,4px 4px 0 #000;padding:18px 14px;max-width:540px;margin:0 auto 16px;}
+    .progress-bar{display:flex;gap:6px;justify-content:center;margin-bottom:18px;}
+    .prog-block{width:26px;height:13px;background:#555;border:2px solid #444;box-shadow:2px 2px 0 #000;transition:background .15s;}
+    .prog-block.done{background:#3a9a3a;border-color:#2a7a2a;}
+    .prog-block.active{background:var(--yellow);border-color:#b08800;}
+    .q-title{font-size:clamp(0.45rem,2.5vw,0.65rem);color:var(--yellow);margin-bottom:16px;line-height:1.9;text-shadow:2px 2px 0 #7a5000;}
+    .mc-input{width:100%;padding:12px 14px;font-family:'Press Start 2P',monospace;font-size:clamp(0.4rem,2vw,0.55rem);background:#000;border:3px solid var(--border);box-shadow:inset 2px 2px 0 #111,2px 2px 0 #000;color:var(--text);outline:none;border-radius:0;caret-color:var(--green);}
+    .mc-input:focus{border-color:var(--green);}
+    .mc-input::placeholder{color:#555;}
+    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+    .choice-grid.solo{grid-template-columns:1fr;}
+    .choice-btn{padding:14px 8px 12px;background:var(--dirt);border:3px solid var(--border);box-shadow:3px 3px 0 #000;color:var(--text);font-family:'Press Start 2P',monospace;font-size:clamp(0.3rem,1.6vw,0.44rem);cursor:pointer;text-align:center;line-height:1.7;transition:transform .08s,background .08s;border-radius:0;-webkit-appearance:none;}
+    .choice-btn .icon{display:block;font-size:clamp(1.5rem,6vw,2.2rem);margin-bottom:7px;}
+    .choice-btn:hover{background:#5a4010;transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000;}
+    .choice-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000;}
+    .choice-btn.sel{background:#2a4a1a;border-color:var(--green);box-shadow:3px 3px 0 #000,0 0 10px rgba(93,255,93,.3);color:var(--green);}
+    .nav{display:flex;gap:10px;margin-top:18px;}
+    .mc-btn{flex:1;padding:13px 10px;font-family:'Press Start 2P',monospace;font-size:clamp(0.35rem,1.8vw,0.5rem);border:3px solid;box-shadow:3px 3px 0 #000;cursor:pointer;border-radius:0;-webkit-appearance:none;transition:transform .08s;}
+    .mc-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000;}
+    .mc-btn.pri{background:#3a7a1a;border-color:var(--green);color:var(--green);}
+    .mc-btn.pri:hover{background:#4a9a2a;}
+    .mc-btn.pri:disabled{background:#2a3a1a;border-color:#3a5a2a;color:#4a7a3a;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 #000;}
+    .mc-btn.sec{background:#3a2e1a;border-color:var(--border);color:var(--sub);}
+    .mc-btn.sec:hover{background:#4a3e2a;}
+    .upload-area{border:3px dashed var(--border);background:#000;padding:30px 16px;text-align:center;cursor:pointer;position:relative;}
+    .upload-area:hover{border-color:var(--green);}
+    .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;font-size:16px;}
+    .upload-icon{font-size:2.8rem;display:block;margin-bottom:10px;}
+    .upload-area p{color:var(--sub);font-size:clamp(0.32rem,1.6vw,0.44rem);line-height:2.2;}
+    .preview-box{background:#000;border:3px solid var(--border);box-shadow:inset 2px 2px 0 #111,3px 3px 0 #000;padding:18px;text-align:center;margin-top:14px;}
+    .preview-box .subtitle{color:var(--sub);font-size:clamp(0.32rem,1.6vw,0.44rem);margin-bottom:12px;line-height:2.2;}
+    .pixel-preview{image-rendering:pixelated;image-rendering:crisp-edges;width:128px;height:128px;border:3px solid var(--green);box-shadow:0 0 14px rgba(93,255,93,.4);display:block;margin:0 auto 14px;}
+    .preview-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+    .preview-actions .mc-btn{flex:none;padding:10px 12px;}
+    .loading-box{text-align:center;padding:28px 16px;}
+    .px-spin{display:inline-block;width:22px;height:22px;background:var(--yellow);box-shadow:2px 2px 0 #000;animation:pxs .5s steps(4) infinite;margin-bottom:14px;}
+    @keyframes pxs{to{transform:rotate(360deg);}}
+    .loading-box p{color:var(--sub);font-size:clamp(0.32rem,1.6vw,0.44rem);line-height:2.5;}
+    .success-box{text-align:center;padding:26px 10px;}
+    .success-box .big-icon{font-size:3.6rem;display:block;margin-bottom:14px;}
+    .success-box h2{color:var(--green);font-size:clamp(0.45rem,2.5vw,0.7rem);margin-bottom:14px;line-height:1.9;text-shadow:2px 2px 0 #006600;}
+    .success-box p{color:var(--sub);font-size:clamp(0.3rem,1.6vw,0.44rem);line-height:2.4;}
+    .divider{border:none;border-top:3px solid var(--border);margin:14px 0;}
+    .hidden{display:none!important;}
   </style>
 </head>
 <body>
-
 <div class="header">
-  <h1>🐾 Pets Plus</h1>
-  <p>Creature Creator — Make something new!</p>
+  <h1>🐾 PETS PLUS</h1>
+  <p>CREATURE CREATOR PORTAL</p>
+</div>
+<div class="panel">
+  <div class="progress-bar" id="pb"></div>
+
+  <!-- S1: Type -->
+  <div id="s1">
+    <div class="q-title">✨ WHAT DO YOU<br>WANT TO CREATE?</div>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="pickType('creature',this)"><span class="icon">🐾</span>CREATURE</button>
+      <button class="choice-btn" onclick="pickType('weapon',this)"><span class="icon">⚔️</span>WEAPON</button>
+      <button class="choice-btn" onclick="pickType('block',this)"><span class="icon">🧱</span>BLOCK</button>
+      <button class="choice-btn" onclick="pickType('item',this)"><span class="icon">🎒</span>ITEM</button>
+    </div>
+    <div class="nav"><button class="mc-btn pri" id="bType" disabled onclick="go(2)">NEXT ▶</button></div>
+  </div>
+
+  <!-- S2: Name -->
+  <div id="s2" class="hidden">
+    <div class="q-title" id="qName">WHAT DO YOU WANT<br>TO CALL IT?</div>
+    <input class="mc-input" type="text" id="iName" placeholder="TYPE A NAME..." maxlength="24" autocomplete="off" autocorrect="off" autocapitalize="words">
+    <div class="nav">
+      <button class="mc-btn sec" onclick="go(1)">◀ BACK</button>
+      <button class="mc-btn pri" onclick="goTypeQ()">NEXT ▶</button>
+    </div>
+  </div>
+
+  <!-- Creature Qs -->
+  <div id="sqC" class="hidden">
+    <div id="cq1">
+      <div class="q-title">🗺️ WHERE DOES<br>IT LIVE?</div>
+      <div class="choice-grid">
+        <button class="choice-btn" onclick="ans('biome','Cave',this,'bBiome')"><span class="icon">🪨</span>CAVE</button>
+        <button class="choice-btn" onclick="ans('biome','Forest',this,'bBiome')"><span class="icon">🌲</span>FOREST</button>
+        <button class="choice-btn" onclick="ans('biome','Ocean',this,'bBiome')"><span class="icon">🌊</span>OCEAN</button>
+        <button class="choice-btn" onclick="ans('biome','Desert',this,'bBiome')"><span class="icon">🏜️</span>DESERT</button>
+        <button class="choice-btn" onclick="ans('biome','Mountains',this,'bBiome')"><span class="icon">🏔️</span>MOUNTAINS</button>
+      </div>
+      <div class="nav">
+        <button class="mc-btn sec" onclick="go(2)">◀ BACK</button>
+        <button class="mc-btn pri" id="bBiome" disabled onclick="cq(2)">NEXT ▶</button>
+      </div>
+    </div>
+    <div id="cq2" class="hidden">
+      <div class="q-title">😊 HOW FRIENDLY<br>IS IT?</div>
+      <div class="choice-grid solo">
+        <button class="choice-btn" onclick="ans('friendliness','Runs away',this,'bFriend')"><span class="icon">💨</span>RUNS AWAY FROM YOU</button>
+        <button class="choice-btn" onclick="ans('friendliness','Ignores you',this,'bFriend')"><span class="icon">😐</span>IGNORES YOU</button>
+        <button class="choice-btn" onclick="ans('friendliness','Follows you around',this,'bFriend')"><span class="icon">🥰</span>FOLLOWS YOU AROUND</button>
+      </div>
+      <div class="nav">
+        <button class="mc-btn sec" onclick="cq(1)">◀ BACK</button>
+        <button class="mc-btn pri" id="bFriend" disabled onclick="cq(3)">NEXT ▶</button>
+      </div>
+    </div>
+    <div id="cq3" class="hidden">
+      <div class="q-title">⚡ WHAT IS ITS<br>SPECIAL POWER?</div>
+      <div class="choice-grid">
+        <button class="choice-btn" onclick="ans('power','Collects items',this,'bPower')"><span class="icon">🧲</span>COLLECTS ITEMS</button>
+        <button class="choice-btn" onclick="ans('power','Finds hidden things',this,'bPower')"><span class="icon">🔍</span>FINDS THINGS</button>
+        <button class="choice-btn" onclick="ans('power','Protects you',this,'bPower')"><span class="icon">🛡️</span>PROTECTS YOU</button>
+        <button class="choice-btn" onclick="ans('power','Scares mobs',this,'bPower')"><span class="icon">👻</span>SCARES MOBS</button>
+        <button class="choice-btn" onclick="ans('power','Digs for treasure',this,'bPower')"><span class="icon">⛏️</span>DIGS TREASURE</button>
+      </div>
+      <div class="nav">
+        <button class="mc-btn sec" onclick="cq(2)">◀ BACK</button>
+        <button class="mc-btn pri" id="bPower" disabled onclick="cq(4)">NEXT ▶</button>
+      </div>
+    </div>
+    <div id="cq4" class="hidden">
+      <div class="q-title">📐 WHAT BODY<br>SHAPE?</div>
+      <div class="choice-grid">
+        <button class="choice-btn" onclick="ans('shape','tiny_crawling',this,'bShape')"><span class="icon">🐜</span>TINY / BUG</button>
+        <button class="choice-btn" onclick="ans('shape','small_ground',this,'bShape')"><span class="icon">🐀</span>SMALL ANIMAL</button>
+        <button class="choice-btn" onclick="ans('shape','medium_ground',this,'bShape')"><span class="icon">🐱</span>MEDIUM ANIMAL</button>
+        <button class="choice-btn" onclick="ans('shape','large_ground',this,'bShape')"><span class="icon">🐻</span>LARGE ANIMAL</button>
+        <button class="choice-btn" onclick="ans('shape','small_flying',this,'bShape')"><span class="icon">🐦</span>SMALL FLYER</button>
+        <button class="choice-btn" onclick="ans('shape','large_flying',this,'bShape')"><span class="icon">🐉</span>LARGE FLYER</button>
+        <button class="choice-btn" onclick="ans('shape','long_slithering',this,'bShape')"><span class="icon">🐍</span>SNAKE / WORM</button>
+        <button class="choice-btn" onclick="ans('shape','swimming',this,'bShape')"><span class="icon">🐟</span>SWIMMER</button>
+      </div>
+      <div class="nav">
+        <button class="mc-btn sec" onclick="cq(3)">◀ BACK</button>
+        <button class="mc-btn pri" id="bShape" disabled onclick="gotoDraw()">NEXT ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weapon Qs -->
+  <div id="sqW" class="hidden">
+    <div class="q-title">⚔️ WHAT DOES<br>IT DO?</div>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="ans('effect','Extra damage',this,'bWE')"><span class="icon">💥</span>EXTRA DAMAGE</button>
+      <button class="choice-btn" onclick="ans('effect','Knockback',this,'bWE')"><span class="icon">💨</span>KNOCKBACK</button>
+      <button class="choice-btn" onclick="ans('effect','Fire',this,'bWE')"><span class="icon">🔥</span>SETS ON FIRE</button>
+      <button class="choice-btn" onclick="ans('effect','Poison',this,'bWE')"><span class="icon">☠️</span>POISONS</button>
+      <button class="choice-btn" onclick="ans('effect','Speed boost',this,'bWE')"><span class="icon">⚡</span>SPEED BOOST</button>
+      <button class="choice-btn" onclick="ans('effect','Lifesteal',this,'bWE')"><span class="icon">❤️</span>LIFESTEAL</button>
+    </div>
+    <div class="nav">
+      <button class="mc-btn sec" onclick="go(2)">◀ BACK</button>
+      <button class="mc-btn pri" id="bWE" disabled onclick="gotoDraw()">NEXT ▶</button>
+    </div>
+  </div>
+
+  <!-- Block Qs -->
+  <div id="sqB" class="hidden">
+    <div class="q-title">🧱 WHAT DOES THE<br>BLOCK DO?</div>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="ans('behaviour','Just looks cool',this,'bBB')"><span class="icon">✨</span>LOOKS COOL</button>
+      <button class="choice-btn" onclick="ans('behaviour','Glows',this,'bBB')"><span class="icon">💡</span>GLOWS</button>
+      <button class="choice-btn" onclick="ans('behaviour','Bouncy',this,'bBB')"><span class="icon">🏀</span>BOUNCY</button>
+      <button class="choice-btn" onclick="ans('behaviour','Damages mobs',this,'bBB')"><span class="icon">🗡️</span>HURTS MOBS</button>
+      <button class="choice-btn" onclick="ans('behaviour','Makes a sound',this,'bBB')"><span class="icon">🔔</span>MAKES SOUND</button>
+      <button class="choice-btn" onclick="ans('behaviour','Grows things',this,'bBB')"><span class="icon">🌱</span>GROWS PLANTS</button>
+    </div>
+    <div class="nav">
+      <button class="mc-btn sec" onclick="go(2)">◀ BACK</button>
+      <button class="mc-btn pri" id="bBB" disabled onclick="gotoDraw()">NEXT ▶</button>
+    </div>
+  </div>
+
+  <!-- Item Qs -->
+  <div id="sqI" class="hidden">
+    <div class="q-title">🎒 WHAT DOES THE<br>ITEM DO?</div>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="ans('use','Eat it',this,'bIU')"><span class="icon">🍎</span>EAT IT</button>
+      <button class="choice-btn" onclick="ans('use','Throw it',this,'bIU')"><span class="icon">🎯</span>THROW IT</button>
+      <button class="choice-btn" onclick="ans('use','Potion effect',this,'bIU')"><span class="icon">🧪</span>POTION EFFECT</button>
+      <button class="choice-btn" onclick="ans('use','Place a light',this,'bIU')"><span class="icon">🕯️</span>PLACE A LIGHT</button>
+      <button class="choice-btn" onclick="ans('use','Summon your pet',this,'bIU')"><span class="icon">📯</span>SUMMON PET</button>
+    </div>
+    <div class="nav">
+      <button class="mc-btn sec" onclick="go(2)">◀ BACK</button>
+      <button class="mc-btn pri" id="bIU" disabled onclick="gotoDraw()">NEXT ▶</button>
+    </div>
+  </div>
+
+  <!-- Drawing -->
+  <div id="sDraw" class="hidden">
+    <div class="q-title">🎨 DRAW IT AND<br>TAKE A PHOTO!</div>
+    <p style="color:var(--sub);font-size:clamp(0.3rem,1.6vw,0.44rem);line-height:2.4;margin-bottom:14px;">
+      Draw your <span id="drawLabel" style="color:var(--yellow)">CREATION</span> on paper, then tap below!
+    </p>
+    <div class="upload-area" id="uArea">
+      <span class="upload-icon">📸</span>
+      <p>TAP TO TAKE A PHOTO<br>OR CHOOSE FROM GALLERY</p>
+      <input type="file" id="fileIn" accept="image/*" capture="environment" onchange="doUpload(event)">
+    </div>
+    <div id="convertBox" class="loading-box hidden">
+      <div class="px-spin"></div>
+      <p>TURNING YOUR DRAWING<br>INTO PIXEL ART...</p>
+    </div>
+    <div id="prevBox" class="preview-box hidden">
+      <p class="subtitle">HERE IS YOUR PIXEL ART!<br>WHAT DO YOU THINK?</p>
+      <img id="prevImg" class="pixel-preview" src="" alt="Pixel art">
+      <div class="preview-actions">
+        <button class="mc-btn pri" onclick="approve()" style="font-size:clamp(0.3rem,1.6vw,0.42rem)">✅ LOVE IT!</button>
+        <button class="mc-btn sec" onclick="fixIt()" style="font-size:clamp(0.3rem,1.6vw,0.42rem)">✏️ FIX IT</button>
+        <button class="mc-btn sec" onclick="redo()" style="font-size:clamp(0.3rem,1.6vw,0.42rem)">📷 REDO</button>
+      </div>
+    </div>
+    <div class="nav" style="margin-top:14px;">
+      <button class="mc-btn sec" onclick="backDraw()">◀ BACK</button>
+    </div>
+  </div>
+
+  <!-- Submitting -->
+  <div id="sSubmit" class="hidden">
+    <div class="loading-box">
+      <div class="px-spin"></div>
+      <p>ADDING YOUR CREATION<br>TO PETS PLUS...</p>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div id="sOk" class="hidden">
+    <div class="success-box">
+      <span class="big-icon">🎉</span>
+      <h2 id="okTitle">IT IS ON ITS WAY!</h2>
+      <hr class="divider">
+      <p>DOWNLOAD THE NEW .MCADDON FROM GITHUB AND AIRDROP IT TO YOUR IPAD TO SEE IT IN THE GAME!</p>
+      <div class="nav" style="margin-top:20px;justify-content:center;">
+        <button class="mc-btn pri" onclick="resetAll()" style="flex:none;padding:12px 20px;">▶ MAKE ANOTHER!</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="card">
-  <div class="steps" id="stepDots"></div>
-
-  <!-- ── SCREEN 1: Your Name ──────────────────── -->
-  <div id="screen-1">
-    <div class="question-title">👋 What's your name?</div>
-    <input type="text" id="input-name" placeholder="Type your first name..." maxlength="20" autocomplete="off">
-    <div class="nav">
-      <button class="btn btn-primary" onclick="goToScreen(2)" id="btn-name">Next →</button>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 2: What are you creating? ────── -->
-  <div id="screen-2" class="hidden">
-    <div class="question-title">✨ What do you want to create?</div>
-    <div class="choices">
-      <button class="choice-btn" onclick="selectType('creature', this)">
-        <span class="emoji">🐾</span>
-        <span class="label">Creature</span>
-      </button>
-      <button class="choice-btn" onclick="selectType('weapon', this)">
-        <span class="emoji">⚔️</span>
-        <span class="label">Weapon or Tool</span>
-      </button>
-      <button class="choice-btn" onclick="selectType('block', this)">
-        <span class="emoji">🧱</span>
-        <span class="label">Block</span>
-      </button>
-      <button class="choice-btn" onclick="selectType('item', this)">
-        <span class="emoji">🎒</span>
-        <span class="label">Item</span>
-      </button>
-    </div>
-    <div class="nav">
-      <button class="btn btn-secondary" onclick="goToScreen(1)">← Back</button>
-      <button class="btn btn-primary" id="btn-type" disabled onclick="goToScreen(3)">Next →</button>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 3: Name your creation ────────── -->
-  <div id="screen-3" class="hidden">
-    <div class="question-title" id="name-question">What is it called?</div>
-    <input type="text" id="input-creature-name" placeholder="Give it a cool name..." maxlength="30" autocomplete="off">
-    <div class="nav">
-      <button class="btn btn-secondary" onclick="goToScreen(2)">← Back</button>
-      <button class="btn btn-primary" onclick="goToTypeQuestions()">Next →</button>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 4: Type-specific questions ────── -->
-  <!-- Creature questions -->
-  <div id="screen-creature" class="hidden">
-    <div id="creature-q1" class="hidden">
-      <div class="question-title">🗺️ Where does it live?</div>
-      <div class="choices">
-        <button class="choice-btn" onclick="selectAnswer('biome','Cave',this)"><span class="emoji">🪨</span><span class="label">Cave</span></button>
-        <button class="choice-btn" onclick="selectAnswer('biome','Forest',this)"><span class="emoji">🌲</span><span class="label">Forest</span></button>
-        <button class="choice-btn" onclick="selectAnswer('biome','Ocean',this)"><span class="emoji">🌊</span><span class="label">Ocean</span></button>
-        <button class="choice-btn" onclick="selectAnswer('biome','Desert',this)"><span class="emoji">🏜️</span><span class="label">Desert</span></button>
-      </div>
-      <div class="nav">
-        <button class="btn btn-secondary" onclick="goToScreen(3)">← Back</button>
-        <button class="btn btn-primary" id="btn-biome" disabled onclick="nextCreatureQ(2)">Next →</button>
-      </div>
-    </div>
-
-    <div id="creature-q2" class="hidden">
-      <div class="question-title">😊 How friendly is it when you first find it?</div>
-      <div class="choices" style="grid-template-columns: 1fr;">
-        <button class="choice-btn" onclick="selectAnswer('friendliness','Runs away',this)"><span class="emoji">💨</span><span class="label">Runs away from you</span></button>
-        <button class="choice-btn" onclick="selectAnswer('friendliness','Ignores you',this)"><span class="emoji">😐</span><span class="label">Ignores you</span></button>
-        <button class="choice-btn" onclick="selectAnswer('friendliness','Follows you around',this)"><span class="emoji">🥰</span><span class="label">Follows you around</span></button>
-      </div>
-      <div class="nav">
-        <button class="btn btn-secondary" onclick="nextCreatureQ(1)">← Back</button>
-        <button class="btn btn-primary" id="btn-friendly" disabled onclick="nextCreatureQ(3)">Next →</button>
-      </div>
-    </div>
-
-    <div id="creature-q3" class="hidden">
-      <div class="question-title">⚡ What's its special power?</div>
-      <div class="choices" style="grid-template-columns: 1fr 1fr;">
-        <button class="choice-btn" onclick="selectAnswer('power','Collects items',this)"><span class="emoji">🧲</span><span class="label">Collects items</span></button>
-        <button class="choice-btn" onclick="selectAnswer('power','Finds hidden things',this)"><span class="emoji">🔍</span><span class="label">Finds hidden things</span></button>
-        <button class="choice-btn" onclick="selectAnswer('power','Protects you',this)"><span class="emoji">🛡️</span><span class="label">Protects you</span></button>
-        <button class="choice-btn" onclick="selectAnswer('power','Scares mobs',this)"><span class="emoji">👻</span><span class="label">Scares mobs</span></button>
-      </div>
-      <div class="nav">
-        <button class="btn btn-secondary" onclick="nextCreatureQ(2)">← Back</button>
-        <button class="btn btn-primary" id="btn-power" disabled onclick="goToDrawing()">Next →</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 5: Draw it! ───────────────────── -->
-  <div id="screen-drawing" class="hidden">
-    <div class="question-title">🎨 Draw it and upload a photo!</div>
-    <p style="color:#a8d8a8; margin-bottom:16px; font-size:0.95rem;">
-      Draw your <span id="draw-type-label">creature</span> on paper, take a photo, and upload it here. ✏️
-    </p>
-    <div class="upload-area" id="uploadArea">
-      <span class="upload-icon">📸</span>
-      <p>Tap here to take a photo or choose from your photos</p>
-      <input type="file" id="drawingUpload" accept="image/*" capture="environment" onchange="handleUpload(event)">
-    </div>
-    <div id="converting-status" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Turning your drawing into pixel art... ✨</p>
-    </div>
-    <div id="preview-area" class="preview-container hidden">
-      <p style="color:#a8d8a8; margin-bottom:12px;">Here's your pixel art! What do you think?</p>
-      <img id="preview-img" class="preview-img" src="" alt="Your pixel art">
-      <div class="preview-actions">
-        <button class="btn btn-primary" onclick="approveArt()" style="flex:none; padding: 12px 24px;">✅ I love it!</button>
-        <button class="btn btn-secondary" onclick="fixInPixilart()" style="flex:none; padding: 12px 24px;">✏️ Fix it</button>
-        <button class="btn btn-secondary" onclick="redraw()" style="flex:none; padding: 12px 24px;">📷 Redraw</button>
-      </div>
-    </div>
-    <div class="nav" style="margin-top:20px;">
-      <button class="btn btn-secondary" onclick="goToTypeQuestions()">← Back</button>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 6: Submitting ─────────────────── -->
-  <div id="screen-submitting" class="hidden">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Sending your creation to the Pets Plus world... 🌍</p>
-    </div>
-  </div>
-
-  <!-- ── SCREEN 7: Success ────────────────────── -->
-  <div id="screen-success" class="hidden">
-    <div class="success">
-      <span class="big-emoji">🎉</span>
-      <h2 id="success-title">It's in the game!</h2>
-      <p id="success-message">Your creation is being added to Pets Plus right now. Next time you load the add-on on your iPad, it'll be there!</p>
-      <div class="nav" style="margin-top:30px; justify-content:center;">
-        <button class="btn btn-primary" onclick="resetForm()" style="flex:none; padding:14px 32px;">Make another one! 🐾</button>
-      </div>
-    </div>
-  </div>
-
-</div><!-- .card -->
-
 <script>
-// ─────────────────────────────────────────────
-// State
-// ─────────────────────────────────────────────
-const state = {
-  screen: 1,
-  totalScreens: 7,
-  name: '',
-  type: '',
-  creatureName: '',
-  answers: {},
-  approvedPixelArt: null  // base64 PNG string
-};
+const S={type:'',name:'',answers:{},art:null,step:'s1'};
+const SCREENS=['s1','s2','sqC','sqW','sqB','sqI','sDraw','sSubmit','sOk'];
 
-// ─────────────────────────────────────────────
-// Screen management
-// ─────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+function show(id){
+  SCREENS.forEach(s=>document.getElementById(s)&&document.getElementById(s).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
-  updateDots();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  S.step=id; prog(); window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function goToScreen(n) {
-  // Validate before advancing
-  if (n === 2 && !document.getElementById('input-name').value.trim()) return;
-  if (n === 4 && !document.getElementById('input-creature-name').value.trim()) return;
-
-  state.name         = document.getElementById('input-name').value.trim();
-  state.creatureName = document.getElementById('input-creature-name').value.trim();
-  state.screen       = n;
-  showScreen(`screen-${n}`);
+function prog(){
+  const m={s1:1,s2:2,sqC:3,sqW:3,sqB:3,sqI:3,sDraw:4,sSubmit:5,sOk:5};
+  const c=m[S.step]||1;
+  const b=document.getElementById('pb'); b.innerHTML='';
+  for(let i=1;i<=5;i++){const d=document.createElement('div');d.className='prog-block'+(i<c?' done':i===c?' active':'');b.appendChild(d);}
 }
-
-function goToTypeQuestions() {
-  state.creatureName = document.getElementById('input-creature-name').value.trim();
-  if (!state.creatureName) return;
-
-  if (state.type === 'creature') {
-    showScreen('screen-creature');
-    nextCreatureQ(1);
-  } else {
-    // TODO: weapon/block/item question screens
-    // For now jump straight to drawing
-    goToDrawing();
+function go(n){
+  if(n===2){
+    const lbl={creature:'WHAT DO YOU WANT\nTO CALL IT?',weapon:'WHAT IS YOUR\nWEAPON CALLED?',block:'WHAT IS YOUR\nBLOCK CALLED?',item:'WHAT IS YOUR\nITEM CALLED?'};
+    document.getElementById('qName').innerHTML=(lbl[S.type]||'WHAT IS IT CALLED?').replace('\n','<br>');
   }
+  show(`s${n}`);
 }
-
-function goToDrawing() {
-  document.getElementById('draw-type-label').textContent = state.type;
-  showScreen('screen-drawing');
+function goTypeQ(){
+  S.name=document.getElementById('iName').value.trim();
+  if(!S.name)return;
+  if(S.type==='creature'){show('sqC');cq(1);}
+  else if(S.type==='weapon')show('sqW');
+  else if(S.type==='block')show('sqB');
+  else if(S.type==='item')show('sqI');
 }
-
-function updateDots() {
-  const dots = document.getElementById('stepDots');
-  dots.innerHTML = '';
-  const total = 5; // simplified step count shown to kids
-  for (let i = 1; i <= total; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'step-dot' +
-      (i === Math.min(state.screen, total) ? ' active' :
-       i < state.screen ? ' done' : '');
-    dots.appendChild(dot);
-  }
+function cq(n){
+  document.querySelectorAll('[id^="cq"]').forEach(e=>e.classList.add('hidden'));
+  document.getElementById('cq'+n).classList.remove('hidden');
 }
-
-// ─────────────────────────────────────────────
-// Type selection
-// ─────────────────────────────────────────────
-function selectType(type, btn) {
-  document.querySelectorAll('#screen-2 .choice-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  state.type = type;
-  document.getElementById('btn-type').disabled = false;
-
-  const labels = { creature: '🐾 What is your creature called?', weapon: '⚔️ What is your weapon called?', block: '🧱 What is your block called?', item: '🎒 What is your item called?' };
-  document.getElementById('name-question').textContent = labels[type] || 'What is it called?';
+function gotoDraw(){
+  document.getElementById('drawLabel').textContent=S.type.toUpperCase();
+  show('sDraw');
 }
-
-// ─────────────────────────────────────────────
-// Answer selection (generic)
-// ─────────────────────────────────────────────
-function selectAnswer(key, value, btn) {
-  const parent = btn.closest('.choices');
-  parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  state.answers[key] = value;
-
-  // Enable the next button for this question
-  const btnMap = { biome: 'btn-biome', friendliness: 'btn-friendly', power: 'btn-power' };
-  if (btnMap[key]) document.getElementById(btnMap[key]).disabled = false;
+function backDraw(){
+  if(S.type==='creature'){show('sqC');cq(4);}
+  else if(S.type==='weapon')show('sqW');
+  else if(S.type==='block')show('sqB');
+  else if(S.type==='item')show('sqI');
 }
-
-// ─────────────────────────────────────────────
-// Creature question flow
-// ─────────────────────────────────────────────
-function nextCreatureQ(n) {
-  document.querySelectorAll('[id^="creature-q"]').forEach(el => el.classList.add('hidden'));
-  document.getElementById(`creature-q${n}`).classList.remove('hidden');
-  showScreen('screen-creature');
+function pickType(t,btn){
+  document.querySelectorAll('#s1 .choice-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); S.type=t;
+  document.getElementById('bType').disabled=false;
 }
-
-// ─────────────────────────────────────────────
-// Drawing upload + pixel art conversion
-// ─────────────────────────────────────────────
-async function handleUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  document.getElementById('uploadArea').classList.add('hidden');
-  document.getElementById('converting-status').classList.remove('hidden');
-  document.getElementById('preview-area').classList.add('hidden');
-
-  const formData = new FormData();
-  formData.append('drawing', file);
-
-  try {
-    const response = await fetch('/convert', { method: 'POST', body: formData });
-    const data = await response.json();
-
-    if (data.success) {
-      document.getElementById('preview-img').src = data.preview;
-      state.approvedPixelArt = data.pixelArt;
-      document.getElementById('converting-status').classList.add('hidden');
-      document.getElementById('preview-area').classList.remove('hidden');
-    } else {
-      alert('Could not convert the image. Try again with a clearer photo!');
-      redraw();
-    }
-  } catch (err) {
-    alert('Something went wrong. Try taking the photo again!');
-    redraw();
-  }
+function ans(key,val,btn,nextId){
+  const g=btn.closest('.choice-grid');
+  g.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); S.answers[key]=val;
+  if(nextId)document.getElementById(nextId).disabled=false;
 }
-
-function approveArt() {
-  submitForm();
+async function doUpload(e){
+  const file=e.target.files[0]; if(!file)return;
+  document.getElementById('uArea').classList.add('hidden');
+  document.getElementById('convertBox').classList.remove('hidden');
+  document.getElementById('prevBox').classList.add('hidden');
+  const fd=new FormData(); fd.append('drawing',file);
+  try{
+    const r=await fetch('/convert',{method:'POST',body:fd});
+    const d=await r.json();
+    if(d.success){
+      S.art=d.pixelArt;
+      document.getElementById('prevImg').src=d.preview;
+      document.getElementById('convertBox').classList.add('hidden');
+      document.getElementById('prevBox').classList.remove('hidden');
+    } else { alert('Could not convert — try a clearer photo!'); redo(); }
+  }catch(err){ alert('Something went wrong — try again!'); redo(); }
 }
-
-function fixInPixilart() {
-  // Open Pixilart with the converted image preloaded
-  // Note: Pixilart doesn't support URL-loaded images directly,
-  // so we open the editor and prompt the user to save + re-upload
-  window.open('https://www.pixilart.com/draw', '_blank');
-  alert("Pixilart is opening! \n\n1. Save your fixed pixel art as a PNG\n2. Come back here and tap 'Redraw' to upload your improved version 🎨");
+function approve(){ submit(); }
+function fixIt(){
+  window.open('https://www.pixilart.com/draw','_blank');
+  alert('PIXILART IS OPENING!\n\n1. Fix your pixel art\n2. Save as PNG\n3. Come back and tap REDO to upload it');
 }
-
-function redraw() {
-  state.approvedPixelArt = null;
-  document.getElementById('drawingUpload').value = '';
-  document.getElementById('uploadArea').classList.remove('hidden');
-  document.getElementById('converting-status').classList.add('hidden');
-  document.getElementById('preview-area').classList.add('hidden');
+function redo(){
+  S.art=null;
+  document.getElementById('fileIn').value='';
+  document.getElementById('uArea').classList.remove('hidden');
+  document.getElementById('convertBox').classList.add('hidden');
+  document.getElementById('prevBox').classList.add('hidden');
 }
-
-// ─────────────────────────────────────────────
-// Final submission
-// ─────────────────────────────────────────────
-async function submitForm() {
-  showScreen('screen-submitting');
-
-  // Convert base64 pixel art back to a file for upload
-  const pixelBlob = await (await fetch(state.approvedPixelArt)).blob();
-
-  const formData = new FormData();
-  formData.append('name',         state.name);
-  formData.append('type',         state.type);
-  formData.append('creatureName', state.creatureName);
-  formData.append('texture',      pixelBlob, 'texture.png');
-
-  // Include all type-specific answers
-  for (const [key, value] of Object.entries(state.answers)) {
-    formData.append(key, value);
-  }
-
-  try {
-    const response = await fetch('/submit', { method: 'POST', body: formData });
-    const data = await response.json();
-
-    document.getElementById('success-title').textContent =
-      `${state.creatureName} is on its way! 🎉`;
-    document.getElementById('success-message').textContent =
-      `Your ${state.type} is being added to Pets Plus right now. Download the new .mcaddon from GitHub and AirDrop it to your iPad to see it in the game!`;
-
-    showScreen('screen-success');
-  } catch (err) {
-    alert('Something went wrong submitting. Please try again!');
-    showScreen('screen-drawing');
-  }
+async function submit(){
+  show('sSubmit');
+  try{
+    const blob=await(await fetch(S.art)).blob();
+    const fd=new FormData();
+    fd.append('type',S.type);
+    fd.append('creatureName',S.name);
+    fd.append('texture',blob,'texture.png');
+    for(const[k,v]of Object.entries(S.answers))fd.append(k,v);
+    await fetch('/submit',{method:'POST',body:fd});
+    document.getElementById('okTitle').textContent=S.name.toUpperCase()+' IS ON ITS WAY!';
+    show('sOk');
+  }catch(err){ alert('Something went wrong — please try again!'); show('sDraw'); }
 }
-
-// ─────────────────────────────────────────────
-// Reset
-// ─────────────────────────────────────────────
-function resetForm() {
-  state.screen = 1;
-  state.name = state.type = state.creatureName = '';
-  state.answers = {};
-  state.approvedPixelArt = null;
-  document.getElementById('input-name').value = '';
-  document.getElementById('input-creature-name').value = '';
-  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('btn-type').disabled = true;
-  redraw();
-  goToScreen(1);
+function resetAll(){
+  S.type=S.name=S.art=''; S.answers={};
+  document.getElementById('iName').value='';
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('sel'));
+  ['bType','bBiome','bFriend','bPower','bShape','bWE','bBB','bIU'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.disabled=true;
+  });
+  redo(); show('s1');
 }
-
-// ─────────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────────
-updateDots();
-
-// Allow Enter key on name inputs
-document.getElementById('input-name').addEventListener('keydown', e => {
-  if (e.key === 'Enter') goToScreen(2);
-});
-document.getElementById('input-creature-name').addEventListener('keydown', e => {
-  if (e.key === 'Enter') goToTypeQuestions();
-});
+prog();
+document.getElementById('iName').addEventListener('keydown',e=>{if(e.key==='Enter')goTypeQ();});
 </script>
 </body>
 </html>
