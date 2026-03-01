@@ -1,0 +1,129 @@
+{
+  "format_version": "1.19.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "pets_plus:{{CREATURE_ID}}",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+
+    "component_groups": {
+
+      "pets_plus:{{CREATURE_ID}}_untamed": {
+        "minecraft:behavior.flee_from_target": {
+          "priority": 1,
+          "speed_multiplier": "{{FLEE_SPEED}}",
+          "flee_distance": 10
+        }
+      },
+
+      "pets_plus:{{CREATURE_ID}}_tamed_following": {
+        "minecraft:is_tamed": {},
+        "minecraft:behavior.follow_owner": {
+          "priority": 3,
+          "speed_multiplier": 1.2,
+          "start_distance": 10,
+          "stop_distance": 2
+        }
+      },
+
+      "pets_plus:{{CREATURE_ID}}_tamed_sitting": {
+        "minecraft:is_tamed": {},
+        "minecraft:is_sitting": {},
+        "minecraft:behavior.stay_while_sitting": {
+          "priority": 2
+        }
+      },
+
+      // Special power component group
+      // This gets filled in by mappings.json based on the portal form answer
+      "pets_plus:{{CREATURE_ID}}_special": {{SPECIAL_POWER_COMPONENT}}
+    },
+
+    "components": {
+      "minecraft:type_family": {
+        "family": ["{{CREATURE_ID}}", "mob", "animal"]
+      },
+      "minecraft:collision_box": {
+        "width": "{{COLLISION_WIDTH}}",
+        "height": "{{COLLISION_HEIGHT}}"
+      },
+      "minecraft:physics": {},
+      "minecraft:health": {
+        "value": "{{HEALTH}}",
+        "max": "{{HEALTH}}"
+      },
+      "minecraft:movement": {
+        "value": "{{MOVEMENT_SPEED}}"
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:nameable": {},
+      "minecraft:tameable": {
+        "probability": "{{TAME_PROBABILITY}}",
+        "tame_items": ["{{TAME_ITEM}}"],
+        "tame_event": {
+          "event": "pets_plus:{{CREATURE_ID}}_on_tame",
+          "target": "self"
+        }
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "all_of": [
+                  { "test": "is_family", "subject": "other", "value": "player" },
+                  { "test": "is_sneaking", "subject": "other", "value": false },
+                  { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "pets_plus:rat_treat" }
+                ]
+              },
+              "event": "pets_plus:{{CREATURE_ID}}_cycle_mode",
+              "target": "self"
+            },
+            "swing": true,
+            "use_item": true
+          }
+        ]
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 9,
+        "speed_multiplier": 0.8
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 10,
+        "look_distance": 6
+      }
+    },
+
+    "events": {
+      "pets_plus:{{CREATURE_ID}}_on_tame": {
+        "add": { "component_groups": ["pets_plus:{{CREATURE_ID}}_tamed_following"] },
+        "remove": { "component_groups": ["pets_plus:{{CREATURE_ID}}_untamed"] }
+      },
+      "pets_plus:{{CREATURE_ID}}_cycle_mode": {
+        "sequence": [
+          {
+            "filters": { "test": "has_component", "value": "minecraft:is_sitting" },
+            "add": { "component_groups": ["pets_plus:{{CREATURE_ID}}_tamed_following"] },
+            "remove": { "component_groups": ["pets_plus:{{CREATURE_ID}}_tamed_sitting"] }
+          },
+          {
+            "filters": { "test": "has_component", "operator": "!=", "value": "minecraft:is_sitting" },
+            "add": { "component_groups": ["pets_plus:{{CREATURE_ID}}_tamed_sitting"] },
+            "remove": { "component_groups": ["pets_plus:{{CREATURE_ID}}_tamed_following"] }
+          }
+        ]
+      },
+      "minecraft:entity_spawned": {
+        "add": { "component_groups": ["pets_plus:{{CREATURE_ID}}_untamed"] }
+      }
+    }
+  }
+}

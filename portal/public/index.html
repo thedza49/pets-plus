@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pets Plus — Creature Creator</title>
+  <style>
+    /* ── Base ──────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      background-image:
+        radial-gradient(ellipse at top, #16213e 0%, #1a1a2e 70%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      padding: 20px;
+    }
+
+    /* ── Header ────────────────────────────────── */
+    .header {
+      text-align: center;
+      padding: 30px 0 20px;
+    }
+    .header h1 {
+      font-size: 2.8rem;
+      color: #7cfc00;
+      text-shadow: 0 0 20px rgba(124,252,0,0.5);
+      letter-spacing: 2px;
+      font-weight: 900;
+    }
+    .header p {
+      color: #a8d8a8;
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    /* ── Card ──────────────────────────────────── */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(124,252,0,0.3);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    /* ── Step indicator ────────────────────────── */
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 30px;
+    }
+    .step-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.3s;
+    }
+    .step-dot.active  { background: #7cfc00; box-shadow: 0 0 8px #7cfc00; }
+    .step-dot.done    { background: #3cb371; }
+
+    /* ── Labels + inputs ───────────────────────── */
+    label {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #7cfc00;
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: 2px solid rgba(124,252,0,0.3);
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #7cfc00;
+    }
+    input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* ── Big choice buttons ─────────────────────── */
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 4px;
+    }
+    .choice-btn {
+      padding: 20px 10px;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .choice-btn .emoji  { display: block; font-size: 2.2rem; margin-bottom: 6px; }
+    .choice-btn .label  { display: block; font-size: 0.95rem; font-weight: 600; }
+    .choice-btn:hover   { border-color: #7cfc00; transform: scale(1.03); background: rgba(124,252,0,0.1); }
+    .choice-btn.selected { border-color: #7cfc00; background: rgba(124,252,0,0.2); box-shadow: 0 0 16px rgba(124,252,0,0.3); }
+
+    /* ── Navigation buttons ─────────────────────── */
+    .nav { display: flex; justify-content: space-between; margin-top: 24px; gap: 12px; }
+    .btn {
+      padding: 14px 32px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: 1;
+    }
+    .btn-primary {
+      background: #7cfc00;
+      color: #1a1a2e;
+    }
+    .btn-primary:hover  { background: #90ff00; transform: translateY(-2px); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Upload area ────────────────────────────── */
+    .upload-area {
+      border: 3px dashed rgba(124,252,0,0.4);
+      border-radius: 14px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .upload-area:hover { border-color: #7cfc00; background: rgba(124,252,0,0.05); }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-area .upload-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+    .upload-area p { color: #a8d8a8; }
+
+    /* ── Pixel art preview ──────────────────────── */
+    .preview-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .preview-img {
+      image-rendering: pixelated;
+      border: 3px solid #7cfc00;
+      border-radius: 8px;
+      width: 160px; height: 160px;
+    }
+    .preview-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── Loading spinner ────────────────────────── */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7cfc00;
+      font-size: 1.1rem;
+    }
+    .spinner {
+      display: inline-block;
+      width: 30px; height: 30px;
+      border: 3px solid rgba(124,252,0,0.3);
+      border-top-color: #7cfc00;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Success screen ─────────────────────────── */
+    .success {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success .big-emoji { font-size: 5rem; display: block; margin-bottom: 20px; }
+    .success h2 { color: #7cfc00; font-size: 2rem; margin-bottom: 10px; }
+    .success p  { color: #a8d8a8; font-size: 1.1rem; line-height: 1.6; }
+
+    /* ── Hidden ─────────────────────────────────── */
+    .hidden { display: none !important; }
+
+    /* ── Question title ─────────────────────────── */
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* ── Mobile tweaks ──────────────────────────── */
+    @media (max-width: 480px) {
+      .header h1 { font-size: 2rem; }
+      .choices { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .choice-btn { padding: 14px 8px; }
+      .choice-btn .emoji { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🐾 Pets Plus</h1>
+  <p>Creature Creator — Make something new!</p>
+</div>
+
+<div class="card">
+  <div class="steps" id="stepDots"></div>
+
+  <!-- ── SCREEN 1: Your Name ──────────────────── -->
+  <div id="screen-1">
+    <div class="question-title">👋 What's your name?</div>
+    <input type="text" id="input-name" placeholder="Type your first name..." maxlength="20" autocomplete="off">
+    <div class="nav">
+      <button class="btn btn-primary" onclick="goToScreen(2)" id="btn-name">Next →</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 2: What are you creating? ────── -->
+  <div id="screen-2" class="hidden">
+    <div class="question-title">✨ What do you want to create?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="selectType('creature', this)">
+        <span class="emoji">🐾</span>
+        <span class="label">Creature</span>
+      </button>
+      <button class="choice-btn" onclick="selectType('weapon', this)">
+        <span class="emoji">⚔️</span>
+        <span class="label">Weapon or Tool</span>
+      </button>
+      <button class="choice-btn" onclick="selectType('block', this)">
+        <span class="emoji">🧱</span>
+        <span class="label">Block</span>
+      </button>
+      <button class="choice-btn" onclick="selectType('item', this)">
+        <span class="emoji">🎒</span>
+        <span class="label">Item</span>
+      </button>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="goToScreen(1)">← Back</button>
+      <button class="btn btn-primary" id="btn-type" disabled onclick="goToScreen(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 3: Name your creation ────────── -->
+  <div id="screen-3" class="hidden">
+    <div class="question-title" id="name-question">What is it called?</div>
+    <input type="text" id="input-creature-name" placeholder="Give it a cool name..." maxlength="30" autocomplete="off">
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="goToScreen(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goToTypeQuestions()">Next →</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 4: Type-specific questions ────── -->
+  <!-- Creature questions -->
+  <div id="screen-creature" class="hidden">
+    <div id="creature-q1" class="hidden">
+      <div class="question-title">🗺️ Where does it live?</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="selectAnswer('biome','Cave',this)"><span class="emoji">🪨</span><span class="label">Cave</span></button>
+        <button class="choice-btn" onclick="selectAnswer('biome','Forest',this)"><span class="emoji">🌲</span><span class="label">Forest</span></button>
+        <button class="choice-btn" onclick="selectAnswer('biome','Ocean',this)"><span class="emoji">🌊</span><span class="label">Ocean</span></button>
+        <button class="choice-btn" onclick="selectAnswer('biome','Desert',this)"><span class="emoji">🏜️</span><span class="label">Desert</span></button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="goToScreen(3)">← Back</button>
+        <button class="btn btn-primary" id="btn-biome" disabled onclick="nextCreatureQ(2)">Next →</button>
+      </div>
+    </div>
+
+    <div id="creature-q2" class="hidden">
+      <div class="question-title">😊 How friendly is it when you first find it?</div>
+      <div class="choices" style="grid-template-columns: 1fr;">
+        <button class="choice-btn" onclick="selectAnswer('friendliness','Runs away',this)"><span class="emoji">💨</span><span class="label">Runs away from you</span></button>
+        <button class="choice-btn" onclick="selectAnswer('friendliness','Ignores you',this)"><span class="emoji">😐</span><span class="label">Ignores you</span></button>
+        <button class="choice-btn" onclick="selectAnswer('friendliness','Follows you around',this)"><span class="emoji">🥰</span><span class="label">Follows you around</span></button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="nextCreatureQ(1)">← Back</button>
+        <button class="btn btn-primary" id="btn-friendly" disabled onclick="nextCreatureQ(3)">Next →</button>
+      </div>
+    </div>
+
+    <div id="creature-q3" class="hidden">
+      <div class="question-title">⚡ What's its special power?</div>
+      <div class="choices" style="grid-template-columns: 1fr 1fr;">
+        <button class="choice-btn" onclick="selectAnswer('power','Collects items',this)"><span class="emoji">🧲</span><span class="label">Collects items</span></button>
+        <button class="choice-btn" onclick="selectAnswer('power','Finds hidden things',this)"><span class="emoji">🔍</span><span class="label">Finds hidden things</span></button>
+        <button class="choice-btn" onclick="selectAnswer('power','Protects you',this)"><span class="emoji">🛡️</span><span class="label">Protects you</span></button>
+        <button class="choice-btn" onclick="selectAnswer('power','Scares mobs',this)"><span class="emoji">👻</span><span class="label">Scares mobs</span></button>
+      </div>
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="nextCreatureQ(2)">← Back</button>
+        <button class="btn btn-primary" id="btn-power" disabled onclick="goToDrawing()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 5: Draw it! ───────────────────── -->
+  <div id="screen-drawing" class="hidden">
+    <div class="question-title">🎨 Draw it and upload a photo!</div>
+    <p style="color:#a8d8a8; margin-bottom:16px; font-size:0.95rem;">
+      Draw your <span id="draw-type-label">creature</span> on paper, take a photo, and upload it here. ✏️
+    </p>
+    <div class="upload-area" id="uploadArea">
+      <span class="upload-icon">📸</span>
+      <p>Tap here to take a photo or choose from your photos</p>
+      <input type="file" id="drawingUpload" accept="image/*" capture="environment" onchange="handleUpload(event)">
+    </div>
+    <div id="converting-status" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Turning your drawing into pixel art... ✨</p>
+    </div>
+    <div id="preview-area" class="preview-container hidden">
+      <p style="color:#a8d8a8; margin-bottom:12px;">Here's your pixel art! What do you think?</p>
+      <img id="preview-img" class="preview-img" src="" alt="Your pixel art">
+      <div class="preview-actions">
+        <button class="btn btn-primary" onclick="approveArt()" style="flex:none; padding: 12px 24px;">✅ I love it!</button>
+        <button class="btn btn-secondary" onclick="fixInPixilart()" style="flex:none; padding: 12px 24px;">✏️ Fix it</button>
+        <button class="btn btn-secondary" onclick="redraw()" style="flex:none; padding: 12px 24px;">📷 Redraw</button>
+      </div>
+    </div>
+    <div class="nav" style="margin-top:20px;">
+      <button class="btn btn-secondary" onclick="goToTypeQuestions()">← Back</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 6: Submitting ─────────────────── -->
+  <div id="screen-submitting" class="hidden">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Sending your creation to the Pets Plus world... 🌍</p>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 7: Success ────────────────────── -->
+  <div id="screen-success" class="hidden">
+    <div class="success">
+      <span class="big-emoji">🎉</span>
+      <h2 id="success-title">It's in the game!</h2>
+      <p id="success-message">Your creation is being added to Pets Plus right now. Next time you load the add-on on your iPad, it'll be there!</p>
+      <div class="nav" style="margin-top:30px; justify-content:center;">
+        <button class="btn btn-primary" onclick="resetForm()" style="flex:none; padding:14px 32px;">Make another one! 🐾</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .card -->
+
+<script>
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+const state = {
+  screen: 1,
+  totalScreens: 7,
+  name: '',
+  type: '',
+  creatureName: '',
+  answers: {},
+  approvedPixelArt: null  // base64 PNG string
+};
+
+// ─────────────────────────────────────────────
+// Screen management
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToScreen(n) {
+  // Validate before advancing
+  if (n === 2 && !document.getElementById('input-name').value.trim()) return;
+  if (n === 4 && !document.getElementById('input-creature-name').value.trim()) return;
+
+  state.name         = document.getElementById('input-name').value.trim();
+  state.creatureName = document.getElementById('input-creature-name').value.trim();
+  state.screen       = n;
+  showScreen(`screen-${n}`);
+}
+
+function goToTypeQuestions() {
+  state.creatureName = document.getElementById('input-creature-name').value.trim();
+  if (!state.creatureName) return;
+
+  if (state.type === 'creature') {
+    showScreen('screen-creature');
+    nextCreatureQ(1);
+  } else {
+    // TODO: weapon/block/item question screens
+    // For now jump straight to drawing
+    goToDrawing();
+  }
+}
+
+function goToDrawing() {
+  document.getElementById('draw-type-label').textContent = state.type;
+  showScreen('screen-drawing');
+}
+
+function updateDots() {
+  const dots = document.getElementById('stepDots');
+  dots.innerHTML = '';
+  const total = 5; // simplified step count shown to kids
+  for (let i = 1; i <= total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot' +
+      (i === Math.min(state.screen, total) ? ' active' :
+       i < state.screen ? ' done' : '');
+    dots.appendChild(dot);
+  }
+}
+
+// ─────────────────────────────────────────────
+// Type selection
+// ─────────────────────────────────────────────
+function selectType(type, btn) {
+  document.querySelectorAll('#screen-2 .choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.type = type;
+  document.getElementById('btn-type').disabled = false;
+
+  const labels = { creature: '🐾 What is your creature called?', weapon: '⚔️ What is your weapon called?', block: '🧱 What is your block called?', item: '🎒 What is your item called?' };
+  document.getElementById('name-question').textContent = labels[type] || 'What is it called?';
+}
+
+// ─────────────────────────────────────────────
+// Answer selection (generic)
+// ─────────────────────────────────────────────
+function selectAnswer(key, value, btn) {
+  const parent = btn.closest('.choices');
+  parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.answers[key] = value;
+
+  // Enable the next button for this question
+  const btnMap = { biome: 'btn-biome', friendliness: 'btn-friendly', power: 'btn-power' };
+  if (btnMap[key]) document.getElementById(btnMap[key]).disabled = false;
+}
+
+// ─────────────────────────────────────────────
+// Creature question flow
+// ─────────────────────────────────────────────
+function nextCreatureQ(n) {
+  document.querySelectorAll('[id^="creature-q"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById(`creature-q${n}`).classList.remove('hidden');
+  showScreen('screen-creature');
+}
+
+// ─────────────────────────────────────────────
+// Drawing upload + pixel art conversion
+// ─────────────────────────────────────────────
+async function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  document.getElementById('uploadArea').classList.add('hidden');
+  document.getElementById('converting-status').classList.remove('hidden');
+  document.getElementById('preview-area').classList.add('hidden');
+
+  const formData = new FormData();
+  formData.append('drawing', file);
+
+  try {
+    const response = await fetch('/convert', { method: 'POST', body: formData });
+    const data = await response.json();
+
+    if (data.success) {
+      document.getElementById('preview-img').src = data.preview;
+      state.approvedPixelArt = data.pixelArt;
+      document.getElementById('converting-status').classList.add('hidden');
+      document.getElementById('preview-area').classList.remove('hidden');
+    } else {
+      alert('Could not convert the image. Try again with a clearer photo!');
+      redraw();
+    }
+  } catch (err) {
+    alert('Something went wrong. Try taking the photo again!');
+    redraw();
+  }
+}
+
+function approveArt() {
+  submitForm();
+}
+
+function fixInPixilart() {
+  // Open Pixilart with the converted image preloaded
+  // Note: Pixilart doesn't support URL-loaded images directly,
+  // so we open the editor and prompt the user to save + re-upload
+  window.open('https://www.pixilart.com/draw', '_blank');
+  alert("Pixilart is opening! \n\n1. Save your fixed pixel art as a PNG\n2. Come back here and tap 'Redraw' to upload your improved version 🎨");
+}
+
+function redraw() {
+  state.approvedPixelArt = null;
+  document.getElementById('drawingUpload').value = '';
+  document.getElementById('uploadArea').classList.remove('hidden');
+  document.getElementById('converting-status').classList.add('hidden');
+  document.getElementById('preview-area').classList.add('hidden');
+}
+
+// ─────────────────────────────────────────────
+// Final submission
+// ─────────────────────────────────────────────
+async function submitForm() {
+  showScreen('screen-submitting');
+
+  // Convert base64 pixel art back to a file for upload
+  const pixelBlob = await (await fetch(state.approvedPixelArt)).blob();
+
+  const formData = new FormData();
+  formData.append('name',         state.name);
+  formData.append('type',         state.type);
+  formData.append('creatureName', state.creatureName);
+  formData.append('texture',      pixelBlob, 'texture.png');
+
+  // Include all type-specific answers
+  for (const [key, value] of Object.entries(state.answers)) {
+    formData.append(key, value);
+  }
+
+  try {
+    const response = await fetch('/submit', { method: 'POST', body: formData });
+    const data = await response.json();
+
+    document.getElementById('success-title').textContent =
+      `${state.creatureName} is on its way! 🎉`;
+    document.getElementById('success-message').textContent =
+      `Your ${state.type} is being added to Pets Plus right now. Download the new .mcaddon from GitHub and AirDrop it to your iPad to see it in the game!`;
+
+    showScreen('screen-success');
+  } catch (err) {
+    alert('Something went wrong submitting. Please try again!');
+    showScreen('screen-drawing');
+  }
+}
+
+// ─────────────────────────────────────────────
+// Reset
+// ─────────────────────────────────────────────
+function resetForm() {
+  state.screen = 1;
+  state.name = state.type = state.creatureName = '';
+  state.answers = {};
+  state.approvedPixelArt = null;
+  document.getElementById('input-name').value = '';
+  document.getElementById('input-creature-name').value = '';
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-type').disabled = true;
+  redraw();
+  goToScreen(1);
+}
+
+// ─────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────
+updateDots();
+
+// Allow Enter key on name inputs
+document.getElementById('input-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') goToScreen(2);
+});
+document.getElementById('input-creature-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') goToTypeQuestions();
+});
+</script>
+</body>
+</html>

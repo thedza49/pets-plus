@@ -1,0 +1,12 @@
+## Pets Plus — Language File (en_US)
+## Add display names for all custom entities and items here.
+## Format: item.pets_plus:item_id.name=Display Name
+
+## ── Entities ──────────────────────────────────
+entity.pets_plus:rat.name=Rat
+
+## ── Items ─────────────────────────────────────
+item.pets_plus:rat_treat.name=Rat Treat
+item.pets_plus:flute.name=Flute
+
+## ── Future items go below this line ───────────

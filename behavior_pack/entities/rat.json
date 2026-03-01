@@ -1,0 +1,254 @@
+{
+  "format_version": "1.19.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "pets_plus:rat",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+
+    // ─────────────────────────────────────────────
+    // COMPONENT GROUPS
+    // These are "states" the rat can be in.
+    // We add/remove them via events (see bottom).
+    // ─────────────────────────────────────────────
+    "component_groups": {
+
+      // State: Untamed — rat is wild, skittish, runs from player
+      "pets_plus:untamed": {
+        "minecraft:behavior.flee_from_target": {
+          "priority": 1,
+          "speed_multiplier": 1.4,
+          "flee_distance": 10
+        },
+        "minecraft:behavior.nearest_attackable_target": {
+          "priority": 2,
+          "entity_types": [
+            {
+              "filters": {
+                "test": "is_family",
+                "subject": "other",
+                "value": "player"
+              },
+              "max_dist": 6
+            }
+          ]
+        }
+      },
+
+      // State: Tamed + Following — rat follows the player around
+      "pets_plus:tamed_following": {
+        "minecraft:is_tamed": {},
+        "minecraft:behavior.follow_owner": {
+          "priority": 3,
+          "speed_multiplier": 1.2,
+          "start_distance": 10,
+          "stop_distance": 2
+        }
+      },
+
+      // State: Tamed + Sitting — rat stays put, does nothing
+      "pets_plus:tamed_sitting": {
+        "minecraft:is_tamed": {},
+        "minecraft:is_sitting": {},
+        "minecraft:behavior.stay_while_sitting": {
+          "priority": 2
+        }
+      },
+
+      // State: Scavenging — rat picks up nearby dropped items
+      // NOTE: Only collects items in the allowed list (see minecraft:behavior.pickup_items)
+      "pets_plus:scavenging": {
+        "minecraft:is_tamed": {},
+        "minecraft:behavior.pickup_items": {
+          "priority": 2,
+          "max_dist": 8,
+          "goal_radius": 1.5,
+          "speed_multiplier": 1.3,
+          // Only pick up these specific items — add more here as the pack grows
+          "items": [
+            "minecraft:oak_log",
+            "minecraft:spruce_log",
+            "minecraft:birch_log",
+            "minecraft:jungle_log",
+            "minecraft:acacia_log",
+            "minecraft:dark_oak_log",
+            "minecraft:cobblestone",
+            "minecraft:stone",
+            "minecraft:coal",
+            "minecraft:iron_ore",
+            "minecraft:deepslate_iron_ore",
+            "minecraft:raw_iron",
+            "minecraft:raw_copper",
+            "minecraft:copper_ore"
+          ]
+        },
+        "minecraft:behavior.follow_owner": {
+          "priority": 5,
+          "speed_multiplier": 1.0,
+          "start_distance": 16,
+          "stop_distance": 3
+        }
+      }
+    },
+
+    // ─────────────────────────────────────────────
+    // COMPONENTS
+    // These are always active regardless of state.
+    // ─────────────────────────────────────────────
+    "components": {
+
+      // Basic identity and physics
+      "minecraft:type_family": {
+        "family": ["rat", "mob", "animal"]
+      },
+      "minecraft:collision_box": {
+        "width": 0.4,
+        "height": 0.35
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
+
+      // Health — rats are fragile, 8 hearts total
+      "minecraft:health": {
+        "value": 8,
+        "max": 8
+      },
+
+      // Movement — small and quick
+      "minecraft:movement": {
+        "value": 0.28
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true,
+        "avoid_damage_blocks": true,
+        "can_path_from_air": false
+      },
+
+      // Can be named with a name tag
+      "minecraft:nameable": {},
+
+      // Can be leashed
+      "minecraft:leashable": {
+        "soft_distance": 4,
+        "hard_distance": 6,
+        "on_leash": {
+          "event": "pets_plus:on_leash",
+          "target": "self"
+        }
+      },
+
+      // Sitting toggle — used by the Rat Treat item interaction
+      "minecraft:is_baby": {},
+
+      // ── TAMING ──────────────────────────────────
+      // Use Bread to tame. 33% chance each attempt.
+      // On success, fires the on_tame event below.
+      "minecraft:tameable": {
+        "probability": 0.33,
+        "tame_items": ["minecraft:bread"],
+        "tame_event": {
+          "event": "pets_plus:on_tame",
+          "target": "self"
+        }
+      },
+
+      // ── INTERACTION: Rat Treat ───────────────────
+      // When player uses Rat Treat on the rat, cycle its mode:
+      //   Follow → Sit → Scavenge → Follow → ...
+      // Stage 2 note: mode cycling will be handled via script.
+      // For Stage 1 this toggles between follow and sit only.
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "all_of": [
+                  { "test": "is_family", "subject": "other", "value": "player" },
+                  { "test": "is_sneaking", "subject": "other", "value": false },
+                  { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "pets_plus:rat_treat" }
+                ]
+              },
+              "event": "pets_plus:cycle_mode",
+              "target": "self"
+            },
+            "swing": true,
+            "use_item": true,
+            "play_sounds": "mob.cat.purr"
+          }
+        ]
+      },
+
+      // Idle wandering behavior (active in all states)
+      "minecraft:behavior.random_stroll": {
+        "priority": 9,
+        "speed_multiplier": 0.8,
+        "interval": 120
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 10,
+        "look_distance": 6,
+        "probability": 0.02
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 10
+      }
+    },
+
+    // ─────────────────────────────────────────────
+    // EVENTS
+    // These fire when triggered by interactions or
+    // behavior components above.
+    // ─────────────────────────────────────────────
+    "events": {
+
+      // Fires when the rat is successfully tamed with Bread
+      "pets_plus:on_tame": {
+        "add": {
+          "component_groups": ["pets_plus:tamed_following"]
+        },
+        "remove": {
+          "component_groups": ["pets_plus:untamed"]
+        }
+      },
+
+      // Fired by Rat Treat interaction — Stage 1: toggle follow/sit
+      // Stage 2: this will be replaced by script-driven mode cycling
+      "pets_plus:cycle_mode": {
+        "sequence": [
+          {
+            "filters": {
+              "test": "has_component",
+              "value": "minecraft:is_sitting"
+            },
+            "add": { "component_groups": ["pets_plus:tamed_following"] },
+            "remove": { "component_groups": ["pets_plus:tamed_sitting"] }
+          },
+          {
+            "filters": {
+              "test": "has_component",
+              "operator": "!=",
+              "value": "minecraft:is_sitting"
+            },
+            "add": { "component_groups": ["pets_plus:tamed_sitting"] },
+            "remove": { "component_groups": ["pets_plus:tamed_following", "pets_plus:scavenging"] }
+          }
+        ]
+      },
+
+      // Default spawn event — rat starts untamed and skittish
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": ["pets_plus:untamed"]
+        }
+      }
+    }
+  }
+}

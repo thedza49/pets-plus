@@ -1,0 +1,43 @@
+{
+  "format_version": "1.20.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "pets_plus:flute",
+      "category": "Equipment"
+    },
+    "components": {
+      "minecraft:display_name": {
+        "value": "Flute"
+      },
+
+      // Only one flute needed — doesn't stack
+      "minecraft:max_stack_size": 1,
+
+      // Points to texture in resource_pack/textures/item_texture.json
+      "minecraft:icon": {
+        "texture": "flute"
+      },
+
+      // Use duration — hold to "play" the flute
+      "minecraft:use_duration": 1,
+
+      // Plays a sound when used
+      // Stage 1: uses a built-in Minecraft note sound as placeholder
+      // Stage 4: replace with custom flute .ogg sound file
+      "minecraft:use_modifiers": {
+        "use_duration": 1,
+        "movement_modifier": 0.2
+      }
+
+      // ─────────────────────────────────────────────
+      // STAGE 2 TODO:
+      // Add scripting logic here to:
+      //   1. Detect player's tamed rat within any range
+      //   2. Set rat's state to "pets_plus:tamed_following"
+      //   3. Play the flute sound
+      //   4. Make rat pathfind back to player
+      // This requires the Bedrock Scripting API (see behavior_pack/scripts/)
+      // ─────────────────────────────────────────────
+    }
+  }
+}

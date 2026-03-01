@@ -1,0 +1,46 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "pets_plus:rat",
+
+      // Points to the 3D model file in resource_pack/models/entity/
+      // Stage 4: replace with a proper custom rat .geo.json model
+      // For now we base it on a cat-sized placeholder
+      "geometry": {
+        "default": "geometry.pets_plus.rat"
+      },
+
+      // Texture applied to the model
+      // Stage 4: this will be the pixel art your son draws
+      "textures": {
+        "default": "textures/entity/rat"
+      },
+
+      // Which render controller to use (standard mob controller)
+      "render_controllers": [
+        "controller.render.rat"
+      ],
+
+      // Animations — walk cycle, idle, sit
+      // Stage 4: custom animations can be added here
+      "animations": {
+        "walk": "animation.rat.walk",
+        "idle": "animation.rat.idle",
+        "sit": "animation.rat.sit"
+      },
+      "scripts": {
+        "animate": [
+          { "walk": "query.modified_move_speed" },
+          "idle"
+        ]
+      },
+
+      // Spawn egg colors — brown body, pink tail
+      "spawn_egg": {
+        "base_color": "#8B5E3C",
+        "overlay_color": "#F4A7B9"
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "_comment": "This file maps portal form selections to Minecraft behavior components and values. Edit this file to add new power types, biomes, or behaviors without touching the core template engine.",
+
+  "spawn_biome": {
+    "Cave":      { "spawns_underground": true,  "height_max": 50,  "height_min": -64, "block_filter": ["minecraft:stone", "minecraft:deepslate"] },
+    "Forest":    { "spawns_underground": false, "height_max": 120, "height_min": 60,  "block_filter": ["minecraft:grass_block", "minecraft:dirt"] },
+    "Ocean":     { "spawns_underwater": true,   "height_max": 62,  "height_min": -20, "block_filter": ["minecraft:sand", "minecraft:gravel"] },
+    "Desert":    { "spawns_underground": false, "height_max": 100, "height_min": 60,  "block_filter": ["minecraft:sand", "minecraft:sandstone"] },
+    "Mountains": { "spawns_underground": false, "height_max": 200, "height_min": 100, "block_filter": ["minecraft:stone", "minecraft:snow"] }
+  },
+
+  "rarity": {
+    "Common":   { "spawn_weight": 80, "herd_min": 2, "herd_max": 5 },
+    "Uncommon": { "spawn_weight": 30, "herd_min": 1, "herd_max": 3 },
+    "Rare":     { "spawn_weight": 8,  "herd_min": 1, "herd_max": 1 }
+  },
+
+  "friendliness": {
+    "Runs away":           { "flee_speed": 1.6, "flee_distance": 12 },
+    "Ignores you":         { "flee_speed": 0.0, "flee_distance": 0  },
+    "Follows you around":  { "flee_speed": 0.0, "flee_distance": 0, "ambient_follow": true }
+  },
+
+  "special_power": {
+    "Collects items": {
+      "component_group": {
+        "minecraft:behavior.pickup_items": {
+          "priority": 2,
+          "max_dist": 8,
+          "goal_radius": 1.5,
+          "speed_multiplier": 1.3
+        }
+      }
+    },
+    "Finds hidden things": {
+      "component_group": {
+        "minecraft:behavior.move_to_block": {
+          "priority": 2,
+          "speed_multiplier": 1.2,
+          "target_block_filters": {},
+          "on_reach": { "event": "pets_plus:on_found", "target": "self" }
+        }
+      }
+    },
+    "Protects you": {
+      "component_group": {
+        "minecraft:behavior.defend_trusted_target": {
+          "priority": 1,
+          "entity_types": [{ "filters": { "test": "is_family", "subject": "other", "value": "monster" }, "max_dist": 12 }]
+        }
+      }
+    },
+    "Scares mobs": {
+      "component_group": {
+        "minecraft:behavior.stomp_attack": {
+          "priority": 2,
+          "speed_multiplier": 1.0,
+          "track_target": true
+        }
+      }
+    },
+    "Digs for treasure": {
+      "component_group": {
+        "minecraft:behavior.move_to_block": {
+          "priority": 2,
+          "speed_multiplier": 1.0,
+          "search_height": 4,
+          "search_range": 10
+        }
+      }
+    }
+  },
+
+  "size": {
+    "tiny":      { "collision_width": 0.3,  "collision_height": 0.25, "movement_speed": 0.32, "health": 6  },
+    "small":     { "collision_width": 0.4,  "collision_height": 0.35, "movement_speed": 0.28, "health": 8  },
+    "same size": { "collision_width": 0.6,  "collision_height": 1.8,  "movement_speed": 0.25, "health": 20 },
+    "big":       { "collision_width": 1.2,  "collision_height": 2.0,  "movement_speed": 0.20, "health": 40 }
+  },
+
+  "tame_items": {
+    "bread":    "minecraft:bread",
+    "fish":     "minecraft:cod",
+    "bone":     "minecraft:bone",
+    "apple":    "minecraft:apple",
+    "carrot":   "minecraft:carrot",
+    "berries":  "minecraft:sweet_berries",
+    "seeds":    "minecraft:wheat_seeds",
+    "meat":     "minecraft:cooked_beef",
+    "cheese":   "minecraft:bread"
+  }
+}

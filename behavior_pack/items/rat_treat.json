@@ -1,0 +1,33 @@
+{
+  "format_version": "1.20.0",
+  "minecraft:item": {
+    "description": {
+      "identifier": "pets_plus:rat_treat",
+      "category": "Equipment"
+    },
+    "components": {
+      // Display name shown in game
+      "minecraft:display_name": {
+        "value": "Rat Treat"
+      },
+      // Tooltip shown when hovering over the item in inventory
+      "minecraft:hover_text_color": "green",
+
+      // How many can stack in one inventory slot
+      "minecraft:max_stack_size": 16,
+
+      // Points to the texture defined in resource_pack/textures/item_texture.json
+      "minecraft:icon": {
+        "texture": "rat_treat"
+      },
+
+      // Use animation — "eat" makes the player hold it up like food
+      // even though it isn't consumed
+      "minecraft:use_animation": "none",
+
+      // Item does not get consumed when used on the rat
+      // The interaction is handled in the rat's behavior JSON above
+      "minecraft:use_duration": 1
+    }
+  }
+}
