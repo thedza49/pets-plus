@@ -1,0 +1,29 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.rat.walk": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "rotation": [0, "Math.sin(query.anim_time * 500) * 10", 0]
+        }
+      }
+    },
+    "animation.rat.idle": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "scale": [1, "1 + Math.sin(query.anim_time * 200) * 0.05", 1]
+        }
+      }
+    },
+    "animation.rat.sit": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "position": [0, -2, 0]
+        }
+      }
+    }
+  }
+}

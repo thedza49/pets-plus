@@ -29,6 +29,9 @@
         "idle": "animation.rat.idle",
         "sit": "animation.rat.sit"
       },
+      "materials": {
+        "default": "entity_alphatest"
+      },
       "scripts": {
         "animate": [
           { "walk": "query.modified_move_speed" },
