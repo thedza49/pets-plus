@@ -391,20 +391,38 @@ let spritesData = null;
 const STEP_MAP = {
   s1:1, s2:2,
   's3-creature':3,'s3-weapon':3,'s3-block':3,'s3-item':3,
+  cq1:3, cq2:3, cq3:3, cq4:3,
+  wq1:3, wq2:3,
+  iq1:3, iq2:3,
   s4:4, s5:5, s6:5
 };
 
 // ── Screen management ─────────────────────────
 function show(id) {
-  document.querySelectorAll('.card > div[id], #s3-creature > div[id], #s3-weapon > div[id], #s3-item > div[id]')
-    .forEach(el => el.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+  // 1. If it's a top-level screen (s1, s2, s3-creature, s4, etc)
+  if (id.startsWith('s')) {
+    document.querySelectorAll('.card > div[id]').forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  } 
+  // 2. If it's a sub-screen (cq1, wq1, iq1)
+  else {
+    const parentId = id.startsWith('cq') ? 's3-creature' : (id.startsWith('wq') ? 's3-weapon' : 's3-item');
+    document.querySelectorAll('.card > div[id]').forEach(el => el.classList.add('hidden'));
+    document.getElementById(parentId).classList.remove('hidden');
+    document.querySelectorAll(`#${parentId} > div[id]`).forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  }
+
   updateProgress(STEP_MAP[id] || 1);
   window.scrollTo({top:0, behavior:'smooth'});
 
   // Auto-submit when reaching s5
   if (id === 's5') submitForm();
 }
+
+function cq(n) { show(`cq${n}`); }
+function wq(n) { show(`wq${n}`); }
+function iq(n) { show(`iq${n}`); }
 
 function updateProgress(step) {
   const bar = document.getElementById('progressBar');
@@ -434,11 +452,10 @@ function pickCat(cat, label, btn) {
 function afterName() {
   S.name = document.getElementById('input-name').value.trim();
   if (!S.name) { document.getElementById('input-name').focus(); return; }
-  const routes = {creature:'s3-creature', weapon:'s3-weapon', block:'s3-block', item:'s3-item'};
-  show(routes[S.category]);
   if (S.category==='creature') cq(1);
-  if (S.category==='weapon')   wq(1);
-  if (S.category==='item')     iq(1);
+  else if (S.category==='weapon')   wq(1);
+  else if (S.category==='item')     iq(1);
+  else if (S.category==='block')    show('s3-block');
 }
 
 // ── Generic picker ────────────────────────────
@@ -459,23 +476,6 @@ function pickShape(shape, btn) {
   btn.classList.add('selected');
   S.answers.shape = shape;
   document.getElementById('btn-cq4').disabled = false;
-}
-
-// ── Sub-screens ───────────────────────────────
-function cq(n) {
-  document.querySelectorAll('[id^="cq"]').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(`cq${n}`).classList.remove('hidden');
-  show('s3-creature');
-}
-function wq(n) {
-  document.querySelectorAll('[id^="wq"]').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(`wq${n}`).classList.remove('hidden');
-  show('s3-weapon');
-}
-function iq(n) {
-  document.querySelectorAll('[id^="iq"]').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(`iq${n}`).classList.remove('hidden');
-  show('s3-item');
 }
 
 // ── Sprite picker ─────────────────────────────
@@ -572,12 +572,10 @@ function selectSprite(sprite, btn) {
 }
 
 function backFromSprites() {
-  const routes = {creature:'s3-creature', weapon:'s3-weapon', block:'s3-block', item:'s3-item'};
-  show(routes[S.category]);
   if (S.category==='creature') cq(4);
-  if (S.category==='weapon')   wq(2);
-  if (S.category==='item')     iq(2);
-  if (S.category==='block')    show('s3-block');
+  else if (S.category==='weapon')   wq(2);
+  else if (S.category==='item')     iq(2);
+  else if (S.category==='block')    show('s3-block');
 }
 
 // ── Submit ────────────────────────────────────
@@ -600,7 +598,7 @@ async function submitForm() {
     document.getElementById('success-title').textContent =
       `${S.name.toUpperCase()} IS ON ITS WAY! 🎉`;
     document.getElementById('success-msg').textContent =
-      `Your ${S.categoryLabel.toLowerCase()} "${S.name}" is being added to Pets Plus! Download the new .mcaddon from GitHub and AirDrop it to your iPad to see it in the game.`;
+      `Your ${S.categoryLabel.toLowerCase()} "${S.name}" is being added to Pets Plus! Download the new .mcaddon from GitHub and AirDrop it to your iPad.`;
     show('s6');
 
   } catch (err) {
