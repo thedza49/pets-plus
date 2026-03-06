@@ -7,12 +7,9 @@
     },
     "flute": {
       "textures": "textures/items/flute"
+    },
+    "dagger": {
+      "textures": "textures/items/dagger"
     }
-    // ─────────────────────────────────────────────
-    // Add new item textures here as the pack grows.
-    // Format: "item_id": { "textures": "textures/items/filename" }
-    // The PNG files go in resource_pack/textures/items/
-    // All textures should be 16x16 pixels.
-    // ─────────────────────────────────────────────
   }
 }
