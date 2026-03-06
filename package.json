@@ -1,6 +1,6 @@
 {
   "name": "pets-plus-portal",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "description": "Creature Creator submission portal for the Pets Plus Minecraft add-on",
   "main": "server.js",
   "scripts": {
