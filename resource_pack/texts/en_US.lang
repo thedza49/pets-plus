@@ -12,3 +12,5 @@ item.pets_plus:flute.name=Flute
 ## ── Future items go below this line ───────────
 entity.pets_plus:freed.name=freed
 entity.pets_plus:freed.name=freed
+entity.pets_plus:flying_squirrel.name=Flying squirrel
+entity.pets_plus:flying_squirrel.name=Flying squirrel

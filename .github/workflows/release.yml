@@ -25,12 +25,22 @@ jobs:
         with:
           fetch-depth: 0  # needed to get full git history for versioning
 
-      # ── Step 2: Read version from manifest ──────────────────
-      - name: Get version
-        id: version
+      # ── Step 2: Read version and changelog ──────────────────
+      - name: Get metadata
+        id: meta
         run: |
           VERSION=$(node -e "const m=require('./behavior_pack/manifest.json'); console.log(m.header.version.join('.'))")
+          
+          # Extract the newest changelog entry (after first --- and before next ###)
+          CHANGELOG=$(node -e "const fs=require('fs'); if(fs.existsSync('CHANGELOG.md')) { const c=fs.readFileSync('CHANGELOG.md','utf8').split('---\\n')[1]; const latest = c.split('\\n\\n###')[0]; console.log(latest ? latest.trim() : 'See commit history.'); } else { console.log('See commit history.'); }")
+          
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
+          # GitHub Actions multiline support
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
           echo "Building version: $VERSION"
 
       # ── Step 3: Package into .mcaddon ───────────────────────
@@ -47,30 +57,30 @@ jobs:
 
           # Combine both into a single .mcaddon
           cd dist
-          zip pets_plus_v${{ steps.version.outputs.version }}.mcaddon behavior_pack.mcpack resource_pack.mcpack
+          zip pets_plus_v${{ steps.meta.outputs.version }}.mcaddon behavior_pack.mcpack resource_pack.mcpack
           cd ..
 
-          echo "✅ Packaged: pets_plus_v${{ steps.version.outputs.version }}.mcaddon"
+          echo "✅ Packaged: pets_plus_v${{ steps.meta.outputs.version }}.mcaddon"
 
       # ── Step 4: Create GitHub Release ───────────────────────
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: "Pets Plus v${{ steps.version.outputs.version }}"
+          tag_name: v${{ steps.meta.outputs.version }}
+          name: "Pets Plus v${{ steps.meta.outputs.version }}"
           body: |
-            ## Pets Plus v${{ steps.version.outputs.version }}
+            ## Pets Plus v${{ steps.meta.outputs.version }}
 
             ### How to install on iPad
-            1. Download `pets_plus_v${{ steps.version.outputs.version }}.mcaddon` below
+            1. Download `pets_plus_v${{ steps.meta.outputs.version }}.mcaddon` below
             2. AirDrop it to your iPad
             3. Minecraft will open automatically and import the pack
             4. Create a new world (or edit existing) → Add-Ons → enable both packs
 
             ### What's in this version
-            See the commit history for details on what was added.
+            ${{ steps.meta.outputs.changelog }}
           files: |
-            dist/pets_plus_v${{ steps.version.outputs.version }}.mcaddon
+            dist/pets_plus_v${{ steps.meta.outputs.version }}.mcaddon
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: false
