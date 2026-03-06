@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
-// Pets Plus — Creature Creator Portal
-// Raspberry Pi server that handles kid submissions, converts
-// drawings to pixel art, and fires the automation pipeline.
+// Pets Plus — Creator Portal
+// Raspberry Pi server that handles kid submissions and
+// fires the automation pipeline.
 // ─────────────────────────────────────────────────────────────
 
 require('dotenv').config();
@@ -24,8 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Routes ────────────────────────────────────────────────────
 
-// POST /submit     — receives the completed form + approved texture
-// POST /convert    — receives a drawing photo, returns 16x16 pixel art
+// POST /submit     — receives the completed form + selected sprite
 // POST /pipeline   — triggers template engine + GitHub push (called by /submit)
 app.use('/submit',   submitRoute);
 app.use('/pipeline', pipelineRoute);
