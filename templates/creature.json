@@ -36,8 +36,6 @@
         }
       },
 
-      // Special power component group
-      // This gets filled in by mappings.json based on the portal form answer
       "pets_plus:{{CREATURE_ID}}_special": {{SPECIAL_POWER_COMPONENT}}
     },
 

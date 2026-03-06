@@ -133,6 +133,8 @@ function fillTemplate(raw, vars) {
     result = result.replace(new RegExp(`"{{${key}}}"`, 'g'), JSON.stringify(value));
     result = result.replace(new RegExp(`{{${key}}}`, 'g'), value);
   }
+  // Strip single-line JS comments (// ...) that would make the JSON invalid in Minecraft
+  result = result.replace(/^\s*\/\/.*$/gm, '');
   return result;
 }
 
@@ -167,6 +169,7 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
   await fs.ensureDir(path.dirname(path.join(REPO_ROOT, currentPaths.resource)));
 
   if (type === 'creature') {
+    const renderControllerName = `controller.render.pets_plus.${creatureId}`;
     const clientEntity = {
       "format_version": "1.10.0",
       "minecraft:client_entity": {
@@ -174,12 +177,28 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
           "identifier": `pets_plus:${creatureId}`,
           "geometry": { "default": modelId || "geometry.pets_plus.small_ground" },
           "textures": { "default": `textures/entity/${creatureId}` },
-          "render_controllers": ["controller.render.default"],
+          "render_controllers": [renderControllerName],
           "spawn_egg": { "base_color": "#7CFC00", "overlay_color": "#2D4A1A" }
         }
       }
     };
     await fs.writeJson(path.join(REPO_ROOT, currentPaths.resource), clientEntity, { spaces: 2 });
+
+    // Write a render controller for this creature
+    const renderController = {
+      "format_version": "1.8.0",
+      "render_controllers": {
+        [renderControllerName]: {
+          "geometry": "Geometry.default",
+          "materials": [{ "*": "Material.default" }],
+          "textures": ["Texture.default"]
+        }
+      }
+    };
+    const rcDir = path.join(REPO_ROOT, 'resource_pack/render_controllers');
+    await fs.ensureDir(rcDir);
+    await fs.writeJson(path.join(rcDir, `${creatureId}.render_controller.json`), renderController, { spaces: 2 });
+    console.log(`  📄 resource_pack/render_controllers/${creatureId}.render_controller.json`);
   } else {
     // For items/blocks, we update item_texture.json or terrain_texture.json later
     // but we can write a placeholder for now
@@ -190,9 +209,13 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
   if (type === 'creature') {
     const spawnBase = await fs.readFile(path.join(REPO_ROOT, 'behavior_pack/spawn_rules/rat.json'), 'utf8');
     await fs.ensureDir(path.join(REPO_ROOT, 'behavior_pack/spawn_rules'));
+    // Replace ALL references to rat (identifier and any event/filter refs)
+    const spawnContent = spawnBase
+      .replace(/pets_plus:rat/g, `pets_plus:${creatureId}`)
+      .replace(/"rat"/g, `"${creatureId}"`);
     await fs.writeFile(
       path.join(REPO_ROOT, `behavior_pack/spawn_rules/${creatureId}.json`),
-      spawnBase.replace(/pets_plus:rat/g, `pets_plus:${creatureId}`)
+      spawnContent
     );
     console.log(`  📄 behavior_pack/spawn_rules/${creatureId}.json`);
   }

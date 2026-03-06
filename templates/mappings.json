@@ -9,6 +9,7 @@
     "small_flying":    { "model": "geometry.pets_plus.small_flying",    "texture": "textures/entity/small_flying",    "scale": 0.6, "width": 0.6,  "height": 0.5,  "speed": 0.35, "health": 8,  "can_fly": true },
     "large_flying":    { "model": "geometry.pets_plus.large_flying",    "texture": "textures/entity/large_flying",    "scale": 1.5, "width": 2.0,  "height": 1.8,  "speed": 0.40, "health": 40, "can_fly": true },
     "long_slithering": { "model": "geometry.pets_plus.long_slithering", "texture": "textures/entity/long_slithering", "scale": 0.8, "width": 0.6,  "height": 0.4,  "speed": 0.22, "health": 12 },
+    "slithering":      { "model": "geometry.pets_plus.long_slithering", "texture": "textures/entity/long_slithering", "scale": 0.8, "width": 0.6,  "height": 0.4,  "speed": 0.22, "health": 12 },
     "swimming":        { "model": "geometry.pets_plus.swimming",        "texture": "textures/entity/swimming",        "scale": 0.9, "width": 0.8,  "height": 0.6,  "speed": 0.30, "health": 14, "can_swim": true }
   },
 

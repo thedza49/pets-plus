@@ -35,7 +35,7 @@ router.post('/', express.json(), async (req, res) => {
 
     // ── Save submission to disk ───────────────────────────────
     const SUBMISSIONS_DIR = process.env.SUBMISSIONS_DIR ||
-      path.join(__dirname, '../../submissions');
+      path.join(__dirname, '../submissions');
 
     const submissionDir = path.join(SUBMISSIONS_DIR, submissionId);
     await fs.ensureDir(submissionDir);
