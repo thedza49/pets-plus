@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 
 ---
+### [3.0.9] - Added creature "freed"
+- **ID**: `pets_plus:freed`
+- **Biome**: Forest
+- **Special Power**: Finds hidden things
+
 ### [3.0.8] - Added weapon "Dagger"
 - **ID**: `pets_plus:dagger`
 - **Biome**: Unknown
