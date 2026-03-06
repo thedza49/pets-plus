@@ -1,0 +1,21 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "pets_plus:flying_squirrel",
+      "geometry": {
+        "default": "geometry.pets_plus.small_ground"
+      },
+      "textures": {
+        "default": "textures/entity/flying_squirrel"
+      },
+      "render_controllers": [
+        "controller.render.default"
+      ],
+      "spawn_egg": {
+        "base_color": "#7CFC00",
+        "overlay_color": "#2D4A1A"
+      }
+    }
+  }
+}
