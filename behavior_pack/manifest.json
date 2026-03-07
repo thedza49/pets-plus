@@ -1,13 +1,13 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Pets Plus Behavior Pack",
+    "name": "Pets Plus BP (v3.0.5)",
     "description": "Tameable companion animals for Minecraft Bedrock",
     "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "version": [
       3,
       0,
-      1
+      5
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         3,
         0,
-        0
+        5
       ]
     }
   ],
@@ -32,7 +32,7 @@
       "version": [
         3,
         0,
-        0
+        5
       ]
     }
   ]
