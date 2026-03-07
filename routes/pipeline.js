@@ -230,7 +230,11 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
   await writeTextureMapping(creatureId, type, spriteFile);
 
   // ── Step 4.6: Language Entry ─────────────────────────────
-  const langKey = type === 'block' ? `tile.pets_plus:${creatureId}.name` : `item.pets_plus:${creatureId}.name`;
+  let langKey;
+  if (type === 'creature') langKey = `entity.pets_plus:${creatureId}.name`;
+  else if (type === 'block') langKey = `tile.pets_plus:${creatureId}.name`;
+  else langKey = `item.pets_plus:${creatureId}.name`;
+
   await fs.appendFile(
     path.join(REPO_ROOT, 'resource_pack/texts/en_US.lang'),
     `${langKey}=${name}\n`

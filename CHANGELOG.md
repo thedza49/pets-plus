@@ -1,5 +1,10 @@
 # Changelog
 ---
+### [3.0.6] - Added creature "VisibleDog"
+- **ID**: `pets_plus:visibledog`
+- **Biome**: Forest
+- **Special Power**: Protects you
+
 ### [3.0.5] - Added creature "FinalCheck"
 - **ID**: `pets_plus:finalcheck`
 - **Biome**: Forest

@@ -1,13 +1,13 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Pets Plus RP (v3.0.5)",
+    "name": "Pets Plus RP (v3.0.6)",
     "description": "Textures, models and sounds for Pets Plus",
     "uuid": "c3d4e5f6-a7b8-9012-cdef-123456789012",
     "version": [
       3,
       0,
-      5
+      6
     ],
     "min_engine_version": [
       1,
@@ -22,7 +22,7 @@
       "version": [
         3,
         0,
-        5
+        6
       ]
     }
   ]
