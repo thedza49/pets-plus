@@ -120,7 +120,12 @@
         ]
       },
       "minecraft:entity_spawned": {
-        "add": { "component_groups": ["pets_plus:{{CREATURE_ID}}_untamed"] }
+        "add": {
+          "component_groups": [
+            "pets_plus:{{CREATURE_ID}}_untamed",
+            "pets_plus:{{CREATURE_ID}}_special"
+          ]
+        }
       }
     }
   }

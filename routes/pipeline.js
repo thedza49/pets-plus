@@ -12,7 +12,7 @@ const { promisify }= require('util');
 
 const execAsync = promisify(exec);
 const router    = express.Router();
-const REPO_ROOT = '/home/daniel/.openclaw/workspace/projects/pets-plus/pets_plus';
+const REPO_ROOT = process.cwd();
 
 // ── Main pipeline function ────────────────────────────────────
 async function runPipeline(submissionId, submissionDir, submission) {
@@ -175,6 +175,7 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
       "minecraft:client_entity": {
         "description": {
           "identifier": `pets_plus:${creatureId}`,
+          "materials": { "default": "entity_alphatest" },
           "geometry": { "default": modelId || "geometry.pets_plus.small_ground" },
           "textures": { "default": `textures/entity/${creatureId}` },
           "render_controllers": [renderControllerName],
@@ -229,7 +230,11 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
   await writeTextureMapping(creatureId, type, spriteFile);
 
   // ── Step 4.6: Language Entry ─────────────────────────────
-  const langKey = type === 'block' ? `tile.pets_plus:${creatureId}.name` : `item.pets_plus:${creatureId}.name`;
+  let langKey;
+  if (type === 'creature') langKey = `entity.pets_plus:${creatureId}.name`;
+  else if (type === 'block') langKey = `tile.pets_plus:${creatureId}.name`;
+  else langKey = `item.pets_plus:${creatureId}.name`;
+
   await fs.appendFile(
     path.join(REPO_ROOT, 'resource_pack/texts/en_US.lang'),
     `${langKey}=${name}\n`
@@ -292,7 +297,7 @@ async function writeRecipe(creatureId, type) {
 }
 
 async function writeTextureMapping(creatureId, type, spriteFile) {
-  const spriteSrc  = path.join(REPO_ROOT, 'portal/public', spriteFile);
+  const spriteSrc  = path.join(REPO_ROOT, 'public', spriteFile);
   
   if (type === 'creature') {
     const spriteDest = path.join(REPO_ROOT, `resource_pack/textures/entity/${creatureId}.png`);
