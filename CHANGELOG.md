@@ -1,5 +1,10 @@
 # Changelog
 ---
+### [4.0.1] - Add animations and fix missing textures
+- Added slithering, flying, and ground animations
+- Fixed item/block texture folders to resolve "purple square" issues
+- Updated pipeline to automatically assign animations to new creatures
+
 ### [4.0.0] - Fix release automation and jump version
 - Restored missing GitHub Actions release workflow
 - Jumped version to 4.0.0 to fix iPad "previously installed" conflicts
