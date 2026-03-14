@@ -3,66 +3,35 @@
   "minecraft:spawn_rules": {
     "description": {
       "identifier": "pets_plus:freed",
-      // "animal" means the game tracks rat population like other passive mobs
       "population_control": "animal"
     },
     "conditions": [
       {
-        // ── WHERE ──────────────────────────────────
-        // Rats spawn underground only.
-        // Remove "minecraft:spawns_underground" and add
-        // "minecraft:spawns_on_surface" if you ever want surface rats.
-        "minecraft:spawns_underground": {},
-
-        // Height filter: only below Y=50 (solidly underground)
-        // Bedrock caves go down to Y=-64 so this covers the whole cave system
+        "minecraft:spawns_on_surface": {},
         "minecraft:height_filter": {
-          "min": -64,
-          "max": 50
+          "min": 60,
+          "max": 120
         },
-
-        // Must spawn on solid stone-type blocks (feels natural in caves)
         "minecraft:spawns_on_block_filter": [
-          "minecraft:stone",
-          "minecraft:cobblestone",
-          "minecraft:deepslate",
-          "minecraft:tuff"
+          "minecraft:grass_block",
+          "minecraft:dirt"
         ],
-
-        // ── LIGHT LEVEL ────────────────────────────
-        // Only spawn in darkness (light level 0–7)
-        // Same range as hostile mobs — rats like the dark
         "minecraft:brightness_filter": {
-          "min": 0,
-          "max": 7,
+          "min": 7,
+          "max": 15,
           "adjust_for_weather": true
         },
-
-        // ── DIFFICULTY ─────────────────────────────
-        // Don't spawn on Peaceful mode (keeps things clean)
         "minecraft:difficulty_filter": {
           "min": "easy",
           "max": "hard"
         },
-
-        // ── RARITY ─────────────────────────────────
-        // Weight 80 = quite common during development so your son
-        // can find and test rats easily.
-        // BEFORE RELEASE: drop this to 8-12 for a more natural rarity.
         "minecraft:weight": {
-          "default": 80
+          "default": 40
         },
-
-        // ── GROUP SIZE ──────────────────────────────
-        // Rats spawn in small groups of 1-3
-        // Makes them feel like real cave-dwelling animals
         "minecraft:herd": {
-          "min_size": 1,
-          "max_size": 3
-        },
-
-        // Only spawns in the overworld (not Nether or End)
-        "minecraft:spawns_on_surface": false
+          "min_size": 2,
+          "max_size": 4
+        }
       }
     ]
   }

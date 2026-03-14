@@ -3,47 +3,35 @@
   "minecraft:spawn_rules": {
     "description": {
       "identifier": "pets_plus:harpy_eagle",
-
       "population_control": "animal"
     },
     "conditions": [
       {
-
-        "minecraft:spawns_underground": {},
-
+        "minecraft:spawns_on_surface": {},
         "minecraft:height_filter": {
-          "min": -64,
-          "max": 50
+          "min": 100,
+          "max": 200
         },
-
         "minecraft:spawns_on_block_filter": [
           "minecraft:stone",
-          "minecraft:cobblestone",
-          "minecraft:deepslate",
-          "minecraft:tuff"
+          "minecraft:snow"
         ],
-
         "minecraft:brightness_filter": {
-          "min": 0,
-          "max": 7,
+          "min": 7,
+          "max": 15,
           "adjust_for_weather": true
         },
-
         "minecraft:difficulty_filter": {
           "min": "easy",
           "max": "hard"
         },
-
         "minecraft:weight": {
-          "default": 80
+          "default": 30
         },
-
         "minecraft:herd": {
           "min_size": 1,
-          "max_size": 3
-        },
-
-        "minecraft:spawns_on_surface": false
+          "max_size": 2
+        }
       }
     ]
   }

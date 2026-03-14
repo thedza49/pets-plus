@@ -40,7 +40,7 @@ async function runPipeline(submissionId, submissionDir, submission) {
   const behaviorJson = fillTemplate(templateRaw, variables);
 
   // ── Step 4: Write pack files ──────────────────────────────
-  await writePackFiles(creatureId, behaviorJson, spriteFile, name, variables.MODEL_ID, type);
+  await writePackFiles(creatureId, behaviorJson, spriteFile, name, variables.MODEL_ID, type, variables);
 
   // ── Step 5: Bump version ──────────────────────────────────
   await bumpVersion();
@@ -122,6 +122,7 @@ function buildVariables(creatureId, formData, mappings, type, spriteId, name) {
     TAME_ITEM:               tameItem,
     TAME_PROBABILITY:        0.33,
     MODEL_ID:                shape.model,
+    BIOME_NAME:              data.biome || 'Cave',
     // Texture path points to the selected sprite copied into entity folder
     TEXTURE_PATH:            `textures/entity/${creatureId}`
   };
@@ -138,7 +139,7 @@ function fillTemplate(raw, vars) {
   return result;
 }
 
-async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelId, type) {
+async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelId, type, variables) {
   const paths = {
     creature: {
       behavior: `behavior_pack/entities/${creatureId}.json`,
@@ -226,16 +227,45 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
 
   // ── Step 4.3: Spawn Rules (Creatures Only) ───────────────
   if (type === 'creature') {
-    const spawnBase = await fs.readFile(path.join(REPO_ROOT, 'behavior_pack/spawn_rules/rat.json'), 'utf8');
+    const mappings = await fs.readJson(path.join(REPO_ROOT, 'templates', 'mappings.json'));
+    const biomeName = variables.BIOME_NAME || 'Cave';
+    const biomeData = mappings.spawn_biome[biomeName] || mappings.spawn_biome['Cave'];
+
+    const spawnRule = {
+      "format_version": "1.17.0",
+      "minecraft:spawn_rules": {
+        "description": {
+          "identifier": `pets_plus:${creatureId}`,
+          "population_control": "animal"
+        },
+        "conditions": [
+          {
+            "minecraft:spawns_on_surface": !biomeData.spawns_underground,
+            "minecraft:spawns_underground": !!biomeData.spawns_underground,
+            "minecraft:spawns_underwater": !!biomeData.spawns_underwater,
+            "minecraft:height_filter": {
+              "min": biomeData.height_min,
+              "max": biomeData.height_max
+            },
+            "minecraft:spawns_on_block_filter": biomeData.blocks,
+            "minecraft:brightness_filter": {
+              "min": biomeData.spawns_underground ? 0 : 7,
+              "max": biomeData.spawns_underground ? 7 : 15,
+              "adjust_for_weather": true
+            },
+            "minecraft:difficulty_filter": { "min": "easy", "max": "hard" },
+            "minecraft:weight": { "default": variables.SPAWN_WEIGHT || 40 },
+            "minecraft:herd": { 
+              "min_size": variables.HERD_MIN || 2, 
+              "max_size": variables.HERD_MAX || 4 
+            }
+          }
+        ]
+      }
+    };
+    
     await fs.ensureDir(path.join(REPO_ROOT, 'behavior_pack/spawn_rules'));
-    // Replace ALL references to rat (identifier and any event/filter refs)
-    const spawnContent = spawnBase
-      .replace(/pets_plus:rat/g, `pets_plus:${creatureId}`)
-      .replace(/"rat"/g, `"${creatureId}"`);
-    await fs.writeFile(
-      path.join(REPO_ROOT, `behavior_pack/spawn_rules/${creatureId}.json`),
-      spawnContent
-    );
+    await fs.writeJson(path.join(REPO_ROOT, `behavior_pack/spawn_rules/${creatureId}.json`), spawnRule, { spaces: 2 });
     console.log(`  📄 behavior_pack/spawn_rules/${creatureId}.json`);
   }
 
