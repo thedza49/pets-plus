@@ -14,7 +14,7 @@ const sharp        = require('sharp');
 
 const execAsync = promisify(exec);
 const router    = express.Router();
-const REPO_ROOT = process.cwd();
+const REPO_ROOT = path.join(__dirname, '..');
 
 // ── Main pipeline function ────────────────────────────────────
 async function runPipeline(submissionId, submissionDir, submission) {

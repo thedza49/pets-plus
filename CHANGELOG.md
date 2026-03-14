@@ -1,5 +1,14 @@
 # Changelog
 ---
+### [4.0.3] - Added block "Ice"
+- **ID**: `pets_plus:ice`
+- **Biome**: Unknown
+- **Special Power**: Unknown
+
+### 📋 Current Project Inventory
+*   🐾 **Creatures:** freed, harpy_eagle, rat
+*   ⚔️ **Items/Weapons:** flute, rat_treat
+
 ### [4.0.1] - Add animations and fix missing textures
 - Added slithering, flying, and ground animations
 - Fixed item/block texture folders to resolve "purple square" issues
