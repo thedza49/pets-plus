@@ -1,0 +1,146 @@
+{
+  "format_version": "1.19.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "pets_plus:harpy_eagle",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+
+    "component_groups": {
+
+      "pets_plus:harpy_eagle_untamed": {
+        "minecraft:behavior.flee_from_target": {
+          "priority": 1,
+          "speed_multiplier": 1.6,
+          "flee_distance": 10
+        }
+      },
+
+      "pets_plus:harpy_eagle_tamed_following": {
+        "minecraft:is_tamed": {},
+        "minecraft:behavior.follow_owner": {
+          "priority": 3,
+          "speed_multiplier": 1.2,
+          "start_distance": 10,
+          "stop_distance": 2
+        }
+      },
+
+      "pets_plus:harpy_eagle_tamed_sitting": {
+        "minecraft:is_tamed": {},
+        "minecraft:is_sitting": {},
+        "minecraft:behavior.stay_while_sitting": {
+          "priority": 2
+        }
+      },
+
+      "pets_plus:harpy_eagle_special": {
+      "minecraft:behavior.defend_trusted_target": {
+            "priority": 1,
+            "entity_types": [
+                  {
+                        "filters": {
+                              "test": "is_family",
+                              "subject": "other",
+                              "value": "monster"
+                        },
+                        "max_dist": 12
+                  }
+            ]
+      }
+}
+    },
+
+    "components": {
+      "minecraft:type_family": {
+        "family": ["harpy_eagle", "mob", "animal"]
+      },
+      "minecraft:collision_box": {
+        "width": 2,
+        "height": 1.8
+      },
+      "minecraft:physics": {},
+      "minecraft:health": {
+        "value": 40,
+        "max": 40
+      },
+      "minecraft:movement": {
+        "value": 0.4
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:nameable": {},
+      "minecraft:tameable": {
+        "probability": 0.33,
+        "tame_items": ["minecraft:bread"],
+        "tame_event": {
+          "event": "pets_plus:harpy_eagle_on_tame",
+          "target": "self"
+        }
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "all_of": [
+                  { "test": "is_family", "subject": "other", "value": "player" },
+                  { "test": "is_sneaking", "subject": "other", "value": false },
+                  { "test": "has_equipment", "subject": "other", "domain": "hand", "value": "pets_plus:rat_treat" }
+                ]
+              },
+              "event": "pets_plus:harpy_eagle_cycle_mode",
+              "target": "self"
+            },
+            "swing": true,
+            "use_item": true
+          }
+        ]
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 9,
+        "speed_multiplier": 0.8
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 10,
+        "look_distance": 6
+      }
+    },
+
+    "events": {
+      "pets_plus:harpy_eagle_on_tame": {
+        "add": { "component_groups": ["pets_plus:harpy_eagle_tamed_following"] },
+        "remove": { "component_groups": ["pets_plus:harpy_eagle_untamed"] }
+      },
+      "pets_plus:harpy_eagle_cycle_mode": {
+        "sequence": [
+          {
+            "filters": { "test": "has_component", "value": "minecraft:is_sitting" },
+            "add": { "component_groups": ["pets_plus:harpy_eagle_tamed_following"] },
+            "remove": { "component_groups": ["pets_plus:harpy_eagle_tamed_sitting"] }
+          },
+          {
+            "filters": { "test": "has_component", "operator": "!=", "value": "minecraft:is_sitting" },
+            "add": { "component_groups": ["pets_plus:harpy_eagle_tamed_sitting"] },
+            "remove": { "component_groups": ["pets_plus:harpy_eagle_tamed_following"] }
+          }
+        ]
+      },
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "pets_plus:harpy_eagle_untamed",
+            "pets_plus:harpy_eagle_special"
+          ]
+        }
+      }
+    }
+  }
+}

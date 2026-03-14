@@ -11,3 +11,4 @@ item.pets_plus:flute.name=Flute
 
 ## ── Future items go below this line ───────────
 entity.pets_plus:visibledog.name=VisibleDog
+entity.pets_plus:harpy_eagle.name=Harpy eagle

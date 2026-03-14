@@ -1,5 +1,10 @@
 # Changelog
 ---
+### [3.0.7] - Added creature "Harpy eagle"
+- **ID**: `pets_plus:harpy_eagle`
+- **Biome**: Mountains
+- **Special Power**: Protects you
+
 ### [3.0.6] - Added creature "VisibleDog"
 - **ID**: `pets_plus:visibledog`
 - **Biome**: Forest
