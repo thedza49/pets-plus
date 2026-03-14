@@ -1,0 +1,15 @@
+{
+  "id": "1773515714793-ice",
+  "submittedAt": "2026-03-14T19:15:14.793Z",
+  "type": "block",
+  "name": "Ice",
+  "sprite": {
+    "id": "oga-0-1773515704256",
+    "url": "https://opengameart.org/sites/default/files/styles/thumbnail/public/boxSlide.png",
+    "thumbnail": "https://opengameart.org/sites/default/files/styles/thumbnail/public/boxSlide.png",
+    "label": "Ice"
+  },
+  "answers": {
+    "blockPower": "Just looks cool"
+  }
+}

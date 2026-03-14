@@ -1,0 +1,15 @@
+{
+  "id": "1773515885051-zeus’s-light",
+  "submittedAt": "2026-03-14T19:18:05.052Z",
+  "type": "weapon",
+  "name": "Zeus’s Light",
+  "sprite": {
+    "id": "wand",
+    "file": "sprites/weapons/wand.png",
+    "label": "Wand"
+  },
+  "answers": {
+    "weaponAction": "Does something magical",
+    "weaponEffect": "Speed boost"
+  }
+}

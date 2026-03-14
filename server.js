@@ -11,6 +11,7 @@ const fs      = require('fs-extra');
 
 const submitRoute   = require('./routes/submit');
 const pipelineRoute = require('./routes/pipeline');
+const searchRoute   = require('./routes/search');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -26,8 +27,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // POST /submit     — receives the completed form + selected sprite
 // POST /pipeline   — triggers template engine + GitHub push (called by /submit)
+// GET  /search     — fetches pixel art from external API
 app.use('/submit',   submitRoute);
 app.use('/pipeline', pipelineRoute);
+app.use('/search',   searchRoute);
 
 // Health check — useful for confirming the server is running
 app.get('/health', (req, res) => {
