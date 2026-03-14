@@ -1,5 +1,10 @@
 # Changelog
 ---
+### [4.0.0] - Fix release automation and jump version
+- Restored missing GitHub Actions release workflow
+- Jumped version to 4.0.0 to fix iPad "previously installed" conflicts
+- Includes Harpy eagle from previous submission
+
 ### [3.0.7] - Added creature "Harpy eagle"
 - **ID**: `pets_plus:harpy_eagle`
 - **Biome**: Mountains
