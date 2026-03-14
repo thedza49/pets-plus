@@ -7,6 +7,9 @@
     },
     "flute": {
       "textures": "textures/items/flute"
+    },
+    "zeus’s_light": {
+      "textures": "textures/items/zeus’s_light"
     }
   }
 }

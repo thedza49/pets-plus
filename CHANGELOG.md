@@ -1,5 +1,14 @@
 # Changelog
 ---
+### [4.0.5] - Added weapon "Zeus’s Light"
+- **ID**: `pets_plus:zeus’s_light`
+- **Biome**: Unknown
+- **Special Power**: Unknown
+
+### 📋 Current Project Inventory
+*   🐾 **Creatures:** freed, harpy_eagle, rat
+*   ⚔️ **Items/Weapons:** flute, rat_treat, **zeus’s_light (NEW)**
+
 ### [4.0.4] - Added block "Ice"
 - **ID**: `pets_plus:ice`
 - **Biome**: Unknown
