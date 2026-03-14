@@ -170,6 +170,22 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
 
   if (type === 'creature') {
     const renderControllerName = `controller.render.pets_plus.${creatureId}`;
+
+    // ── Step 4.2a: Animation Logic ─────────────────────────
+    let animations = {};
+    let animate = [];
+
+    if (modelId.includes('ground') || modelId.includes('crawling')) {
+      animations = { "walk": "animation.pets_plus.ground.walk" };
+      animate = [{ "walk": "query.modified_move_speed > 0.1" }];
+    } else if (modelId.includes('flying')) {
+      animations = { "fly": "animation.pets_plus.flying.fly" };
+      animate = ["fly"];
+    } else if (modelId.includes('slithering')) {
+      animations = { "move": "animation.pets_plus.slithering.move" };
+      animate = ["move"];
+    }
+
     const clientEntity = {
       "format_version": "1.10.0",
       "minecraft:client_entity": {
@@ -178,6 +194,8 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
           "materials": { "default": "entity_alphatest" },
           "geometry": { "default": modelId || "geometry.pets_plus.small_ground" },
           "textures": { "default": `textures/entity/${creatureId}` },
+          "animations": animations,
+          "scripts": { "animate": animate },
           "render_controllers": [renderControllerName],
           "spawn_egg": { "base_color": "#7CFC00", "overlay_color": "#2D4A1A" }
         }

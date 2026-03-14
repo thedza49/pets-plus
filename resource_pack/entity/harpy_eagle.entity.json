@@ -12,6 +12,14 @@
       "textures": {
         "default": "textures/entity/harpy_eagle"
       },
+      "animations": {
+        "fly": "animation.pets_plus.flying.fly"
+      },
+      "scripts": {
+        "animate": [
+          "fly"
+        ]
+      },
       "render_controllers": [
         "controller.render.pets_plus.harpy_eagle"
       ],

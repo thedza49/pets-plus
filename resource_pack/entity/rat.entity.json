@@ -9,6 +9,18 @@
       "textures": {
         "default": "textures/entity/rat"
       },
+      "animations": {
+        "idle": "animation.rat.idle",
+        "walk": "animation.rat.walk",
+        "sit": "animation.rat.sit"
+      },
+      "scripts": {
+        "animate": [
+          "idle",
+          { "walk": "query.modified_move_speed > 0.1" },
+          { "sit": "query.is_sitting" }
+        ]
+      },
       "render_controllers": ["controller.render.default"],
       "spawn_egg": {
         "base_color": "#8B5E3C",
