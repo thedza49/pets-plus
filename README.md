@@ -1,25 +1,42 @@
-# Pets Plus Minecraft Add-on
+# 🐾 Pets Plus — Creator Portal
 
-## Overview
-Pets Plus is a custom Minecraft add-on that introduces a variety of new creatures, items, and mechanics to the game. This project includes a submission portal for creating and processing new creature sprites.
+Pets Plus is a dynamic Minecraft Bedrock Edition add-on and web-based creation suite. It allows anyone to design new creatures, weapons, blocks, and items through a simple web portal and have them automatically built, versioned, and deployed to Minecraft.
 
-## Version 4.0.0 (Claude-fixed)
-This version includes major bug fixes and improvements:
-- **Spawning Fixes:** Resolved issues with invisible creatures by correcting render controllers and JSON structures.
-- **Improved Models:** Fixed body shapes for slithering creatures like snakes.
-- **Texture Pipeline:** Corrected the sprite/texture copying process to ensure all creatures display properly in-game.
+## 🚀 Features
 
-## Project Structure
-- `behavior_pack/`: Minecraft behavior definitions (entities, items, spawn rules).
-- `resource_pack/`: Minecraft visual assets (textures, models, animations).
-- `public/`: Assets and UI for the submission portal.
-- `routes/`: Portal backend logic for sprite processing and pipeline management.
-- `templates/`: Base JSON templates for generating new Minecraft content.
+### **1. The Creator Portal**
+A kid-friendly web interface for generating Minecraft content:
+- **Magic Mirror (OpenGameArt Search):** Real-time pixel art search engine. Simply name your creation, and the portal finds matching high-quality sprites.
+- **Smart Crop:** Automatically centers and crops external spritesheets (32x32) to ensure perfect rendering in Minecraft.
+- **Form-to-Code:** Turns simple questions ("Where does it live?", "How friendly is it?") into complex Minecraft Behavior JSON.
 
-## Setup & Deployment
-1. **Local Server:** Run `npm start` to launch the portal.
-2. **GitHub Integration:** New creature submissions automatically trigger a GitHub Actions build, generating a fresh `.mcaddon` release.
+### **2. Dynamic Add-on Engine**
+- **Characteristic Animations:** Automatic assignment of movement styles (Flying, Slithering, Walking) based on body shape.
+- **Diverse Categories:** Support for custom Creatures, Weapons, Blocks, and Items.
+- **Automated Balancing:** Sets health, speed, and collision boxes based on the chosen creature size.
 
-## Developer Notes
-- **Environment:** Designed for Raspberry Pi 4.
-- **Build Automation:** Uses GitHub Actions to compile and release add-on files.
+### **3. Automatic Release Pipeline**
+Every submission triggers a full CI/CD cycle:
+1. **Packaging:** Zips Behavior and Resource packs into a single `.mcaddon` file.
+2. **Versioning:** Automatically increments the version number (currently **v4.0.5+**).
+3. **Distribution:** Publishes the new build to [GitHub Releases](https://github.com/thedza49/pets-plus/releases) with an auto-generated inventory list of all current project creations.
+
+## 📥 How to Install & Play
+
+The add-on is distributed via **GitHub Releases** for easy access.
+
+1.  **Download**: Go to the [Releases page](https://github.com/thedza49/pets-plus/releases) and download the latest `.mcaddon` file.
+2.  **Import**: AirDrop or open the file on your device to launch Minecraft and import the packs.
+3.  **World Setup**:
+    *   Activate **Pets Plus BP** and **Pets Plus RP** in your world settings.
+    *   **⚠️ Critical**: Enable **Beta APIs** in the Experiments menu.
+
+## 📂 Project Structure
+- `behavior_pack/`: Real-time Minecraft logic, entities, and spawn rules.
+- `resource_pack/`: Models, textures, and animations.
+- `public/`: The frontend code for the Creator Portal.
+- `routes/`: Backend logic handling search and the submission pipeline.
+- `templates/`: Minecraft JSON blueprints used to generate new content.
+
+---
+*Developed by Daniel using OpenClaw.*
