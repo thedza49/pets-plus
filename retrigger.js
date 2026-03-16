@@ -2,12 +2,16 @@ const { runPipeline } = require('./routes/pipeline');
 const fs = require('fs-extra');
 const path = require('path');
 
-const submissionId = '1772518918622-freed';
-const submissionDir = path.join(__dirname, 'submissions', submissionId);
-
-async function trigger() {
+async function retrigger(submissionId) {
+  console.log(`\n🔄 Retriggering: ${submissionId}`);
+  const submissionDir = path.join(__dirname, 'submissions', submissionId);
   const submission = await fs.readJson(path.join(submissionDir, 'submission.json'));
   await runPipeline(submissionId, submissionDir, submission);
 }
 
-trigger().catch(console.error);
+async function run() {
+  await retrigger('1773515714793-ice');
+  await retrigger('1773515885051-zeus’s-light');
+}
+
+run().catch(console.error);

@@ -4,10 +4,12 @@
 
 ## ── Entities ──────────────────────────────────
 entity.pets_plus:rat.name=Rat
+entity.pets_plus:harpy_eagle.name=Harpy eagle
+entity.pets_plus:freed.name=Freed
 
 ## ── Items ─────────────────────────────────────
 item.pets_plus:rat_treat.name=Rat Treat
 item.pets_plus:flute.name=Flute
-
-## ── Future items go below this line ───────────
-entity.pets_plus:visibledog.name=VisibleDog
+tile.pets_plus:ice.name=Ice
+tile.pets_plus:ice.name=Ice
+item.pets_plus:zeus’s_light.name=Zeus’s Light
