@@ -20,6 +20,11 @@ This version includes major bug fixes and improvements:
 1. **Local Server:** Run `npm start` to launch the portal.
 2. **GitHub Integration:** New creature submissions automatically trigger a GitHub Actions build, generating a fresh `.mcaddon` release.
 
-## Developer Notes
-- **Environment:** Designed for Raspberry Pi 4.
-- **Build Automation:** Uses GitHub Actions to compile and release add-on files.
+## 🗺️ Mini Roadmap
+
+- [ ] **Characteristic Animations**: Refine "Slither" and "Fly" animations to better match the 4.0.0 model improvements.
+- [ ] **Magic Mirror Polish**: Improve the sprite preview logic to better handle asymmetrical spritesheets.
+- [ ] **Portal Inventory Sync**: Ensure the portal UI stays perfectly in sync with the actual creatures currently released in the behavior pack.
+
+---
+*Developed for Daniel by Nia @ OpenClaw.*
