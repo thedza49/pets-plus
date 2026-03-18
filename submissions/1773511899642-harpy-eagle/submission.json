@@ -1,0 +1,17 @@
+{
+  "id": "1773511899642-harpy-eagle",
+  "submittedAt": "2026-03-14T18:11:39.647Z",
+  "type": "creature",
+  "name": "Harpy eagle",
+  "sprite": {
+    "id": "eagle",
+    "file": "sprites/large_flying/eagle.png",
+    "label": "Eagle"
+  },
+  "answers": {
+    "biome": "Mountains",
+    "friendliness": "Runs away",
+    "power": "Protects you",
+    "shape": "large_flying"
+  }
+}

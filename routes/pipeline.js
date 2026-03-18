@@ -9,10 +9,12 @@ const fs           = require('fs-extra');
 const path         = require('path');
 const { exec }     = require('child_process');
 const { promisify }= require('util');
+const axios        = require('axios');
+const sharp        = require('sharp');
 
 const execAsync = promisify(exec);
 const router    = express.Router();
-const REPO_ROOT = process.cwd();
+const REPO_ROOT = path.join(__dirname, '..');
 
 // ── Main pipeline function ────────────────────────────────────
 async function runPipeline(submissionId, submissionDir, submission) {
@@ -40,7 +42,7 @@ async function runPipeline(submissionId, submissionDir, submission) {
   const behaviorJson = fillTemplate(templateRaw, variables);
 
   // ── Step 4: Write pack files ──────────────────────────────
-  await writePackFiles(creatureId, behaviorJson, spriteFile, name, variables.MODEL_ID, type);
+  await writePackFiles(creatureId, behaviorJson, sprite, name, variables.MODEL_ID, type, variables);
 
   // ── Step 5: Bump version ──────────────────────────────────
   await bumpVersion();
@@ -64,7 +66,19 @@ async function writeChangelog(creatureId, name, formData, type) {
   const power = data.power || 'Unknown';
   
   const title = `v${version} - Added ${type} "${name}"`;
-  const entry = `### [${version}] - Added ${type} "${name}"\n- **ID**: \`pets_plus:${creatureId}\`\n- **Biome**: ${biome}\n- **Special Power**: ${power}\n\n`;
+  
+  // ── Build Inventory Section ──────────────────────────────
+  const entitiesDir = path.join(REPO_ROOT, 'behavior_pack/entities');
+  const itemsDir    = path.join(REPO_ROOT, 'behavior_pack/items');
+  
+  const entities = (await fs.readdir(entitiesDir)).map(f => f.replace('.json', ''));
+  const items    = (await fs.readdir(itemsDir)).map(f => f.replace('.json', ''));
+  
+  let inventoryStr = `### 📋 Current Project Inventory\n`;
+  inventoryStr += `*   🐾 **Creatures:** ${entities.map(e => e === creatureId ? `**${e} (NEW)**` : e).join(', ')}\n`;
+  inventoryStr += `*   ⚔️ **Items/Weapons:** ${items.map(i => i === creatureId ? `**${i} (NEW)**` : i).join(', ')}\n\n`;
+
+  const entry = `### [${version}] - Added ${type} "${name}"\n- **ID**: \`pets_plus:${creatureId}\`\n- **Biome**: ${biome}\n- **Special Power**: ${power}\n\n${inventoryStr}`;
   
   const changelogPath = path.join(REPO_ROOT, 'CHANGELOG.md');
   const currentContent = await fs.readFile(changelogPath, 'utf8');
@@ -122,6 +136,7 @@ function buildVariables(creatureId, formData, mappings, type, spriteId, name) {
     TAME_ITEM:               tameItem,
     TAME_PROBABILITY:        0.33,
     MODEL_ID:                shape.model,
+    BIOME_NAME:              data.biome || 'Cave',
     // Texture path points to the selected sprite copied into entity folder
     TEXTURE_PATH:            `textures/entity/${creatureId}`
   };
@@ -138,7 +153,7 @@ function fillTemplate(raw, vars) {
   return result;
 }
 
-async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelId, type) {
+async function writePackFiles(creatureId, behaviorJson, sprite, name, modelId, type, variables) {
   const paths = {
     creature: {
       behavior: `behavior_pack/entities/${creatureId}.json`,
@@ -170,6 +185,22 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
 
   if (type === 'creature') {
     const renderControllerName = `controller.render.pets_plus.${creatureId}`;
+
+    // ── Step 4.2a: Animation Logic ─────────────────────────
+    let animations = {};
+    let animate = [];
+
+    if (modelId.includes('ground') || modelId.includes('crawling')) {
+      animations = { "walk": "animation.pets_plus.ground.walk" };
+      animate = [{ "walk": "query.modified_move_speed > 0.1" }];
+    } else if (modelId.includes('flying')) {
+      animations = { "fly": "animation.pets_plus.flying.fly" };
+      animate = ["fly"];
+    } else if (modelId.includes('slithering')) {
+      animations = { "move": "animation.pets_plus.slithering.move" };
+      animate = ["move"];
+    }
+
     const clientEntity = {
       "format_version": "1.10.0",
       "minecraft:client_entity": {
@@ -178,6 +209,8 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
           "materials": { "default": "entity_alphatest" },
           "geometry": { "default": modelId || "geometry.pets_plus.small_ground" },
           "textures": { "default": `textures/entity/${creatureId}` },
+          "animations": animations,
+          "scripts": { "animate": animate },
           "render_controllers": [renderControllerName],
           "spawn_egg": { "base_color": "#7CFC00", "overlay_color": "#2D4A1A" }
         }
@@ -208,16 +241,45 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
 
   // ── Step 4.3: Spawn Rules (Creatures Only) ───────────────
   if (type === 'creature') {
-    const spawnBase = await fs.readFile(path.join(REPO_ROOT, 'behavior_pack/spawn_rules/rat.json'), 'utf8');
+    const mappings = await fs.readJson(path.join(REPO_ROOT, 'templates', 'mappings.json'));
+    const biomeName = variables.BIOME_NAME || 'Cave';
+    const biomeData = mappings.spawn_biome[biomeName] || mappings.spawn_biome['Cave'];
+
+    const spawnRule = {
+      "format_version": "1.17.0",
+      "minecraft:spawn_rules": {
+        "description": {
+          "identifier": `pets_plus:${creatureId}`,
+          "population_control": "animal"
+        },
+        "conditions": [
+          {
+            "minecraft:spawns_on_surface": !biomeData.spawns_underground,
+            "minecraft:spawns_underground": !!biomeData.spawns_underground,
+            "minecraft:spawns_underwater": !!biomeData.spawns_underwater,
+            "minecraft:height_filter": {
+              "min": biomeData.height_min,
+              "max": biomeData.height_max
+            },
+            "minecraft:spawns_on_block_filter": biomeData.blocks,
+            "minecraft:brightness_filter": {
+              "min": biomeData.spawns_underground ? 0 : 7,
+              "max": biomeData.spawns_underground ? 7 : 15,
+              "adjust_for_weather": true
+            },
+            "minecraft:difficulty_filter": { "min": "easy", "max": "hard" },
+            "minecraft:weight": { "default": variables.SPAWN_WEIGHT || 40 },
+            "minecraft:herd": { 
+              "min_size": variables.HERD_MIN || 2, 
+              "max_size": variables.HERD_MAX || 4 
+            }
+          }
+        ]
+      }
+    };
+    
     await fs.ensureDir(path.join(REPO_ROOT, 'behavior_pack/spawn_rules'));
-    // Replace ALL references to rat (identifier and any event/filter refs)
-    const spawnContent = spawnBase
-      .replace(/pets_plus:rat/g, `pets_plus:${creatureId}`)
-      .replace(/"rat"/g, `"${creatureId}"`);
-    await fs.writeFile(
-      path.join(REPO_ROOT, `behavior_pack/spawn_rules/${creatureId}.json`),
-      spawnContent
-    );
+    await fs.writeJson(path.join(REPO_ROOT, `behavior_pack/spawn_rules/${creatureId}.json`), spawnRule, { spaces: 2 });
     console.log(`  📄 behavior_pack/spawn_rules/${creatureId}.json`);
   }
 
@@ -227,7 +289,7 @@ async function writePackFiles(creatureId, behaviorJson, spriteFile, name, modelI
   }
 
   // ── Step 4.5: Texture Mapping ────────────────────────────
-  await writeTextureMapping(creatureId, type, spriteFile);
+  await writeTextureMapping(creatureId, type, sprite);
 
   // ── Step 4.6: Language Entry ─────────────────────────────
   let langKey;
@@ -296,40 +358,55 @@ async function writeRecipe(creatureId, type) {
   console.log(`  📜 recipe → behavior_pack/recipes/${creatureId}.json`);
 }
 
-async function writeTextureMapping(creatureId, type, spriteFile) {
-  const spriteSrc  = path.join(REPO_ROOT, 'public', spriteFile);
-  
-  if (type === 'creature') {
-    const spriteDest = path.join(REPO_ROOT, `resource_pack/textures/entity/${creatureId}.png`);
-    await fs.ensureDir(path.dirname(spriteDest));
+async function writeTextureMapping(creatureId, type, sprite) {
+  const textureDir = type === 'creature' ? 'entity' : (type === 'block' ? 'blocks' : 'items');
+  const spriteDest = path.join(REPO_ROOT, `resource_pack/textures/${textureDir}/${creatureId}.png`);
+  await fs.ensureDir(path.dirname(spriteDest));
+
+  if (sprite.url) {
+    // ── External URL: Download and process ─────────────────
+    console.log(`  🌐 Downloading external sprite: ${sprite.url}`);
+    try {
+      const response = await axios.get(sprite.url, { responseType: 'arraybuffer' });
+      const buffer = Buffer.from(response.data);
+      
+      // Process with Sharp: resize to 32x32 and ensure PNG
+      // We use SMART CROP to handle "spritesheet" style images
+      await sharp(buffer)
+        .resize(32, 32, { 
+          fit: 'cover',
+          position: 'center',
+          kernel: 'nearest' 
+        })
+        .toFile(spriteDest);
+      
+      console.log(`  🎨 Processed & Saved: ${spriteDest}`);
+    } catch (err) {
+      console.error(`  ❌ Failed to download/process external sprite: ${err.message}`);
+      // Fallback to a local rat if it fails
+      await fs.copy(path.join(REPO_ROOT, 'resource_pack/textures/entity/rat.png'), spriteDest);
+    }
+  } else {
+    // ── Local File: Copy directly ──────────────────────────
+    const spriteSrc = path.join(REPO_ROOT, 'public', sprite.file);
     if (await fs.pathExists(spriteSrc)) {
       await fs.copy(spriteSrc, spriteDest);
     } else {
+      console.warn(`  ⚠️ Local sprite not found: ${spriteSrc}. Falling back.`);
       await fs.copy(path.join(REPO_ROOT, 'resource_pack/textures/entity/rat.png'), spriteDest);
     }
-  } else if (type === 'block') {
-    // Add to terrain_texture.json
+  }
+
+  // Update JSON mappings if not a creature
+  if (type === 'block') {
     const terrainPath = path.join(REPO_ROOT, 'resource_pack/textures/terrain_texture.json');
     const terrain = await fs.readJson(terrainPath);
-    const textureName = creatureId;
-    const spriteDest = path.join(REPO_ROOT, `resource_pack/textures/blocks/${creatureId}.png`);
-    
-    await fs.ensureDir(path.dirname(spriteDest));
-    await fs.copy(spriteSrc, spriteDest);
-    
-    terrain.texture_data[textureName] = { "textures": `textures/blocks/${creatureId}` };
+    terrain.texture_data[creatureId] = { "textures": `textures/blocks/${creatureId}` };
     await fs.writeJson(terrainPath, terrain, { spaces: 2 });
-  } else {
-    // Add to item_texture.json
+  } else if (type !== 'creature') {
     const itemPath = path.join(REPO_ROOT, 'resource_pack/textures/item_texture.json');
     const items = await fs.readJson(itemPath);
-    const textureName = creatureId;
-    const spriteDest = path.join(REPO_ROOT, `resource_pack/textures/items/${creatureId}.png`);
-    
-    await fs.ensureDir(path.dirname(spriteDest));
-    await fs.copy(spriteSrc, spriteDest);
-    
-    items.texture_data[textureName] = { "textures": `textures/items/${creatureId}` };
+    items.texture_data[creatureId] = { "textures": `textures/items/${creatureId}` };
     await fs.writeJson(itemPath, items, { spaces: 2 });
   }
 }
